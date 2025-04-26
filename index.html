@@ -184,76 +184,72 @@
       border-color: #e67e22;
     }
     
-    /* 모바일 디바이스를 위한 미디어 쿼리 */
-    @media screen and (max-width: 768px) {
-      body {
-        flex-direction: column;
-        padding: 0.5rem;
-      }
-      
-      .game-container {
-        order: 1;
-        flex: 0 0 auto;
-        margin-bottom: 0.5rem;
-      }
-      
-      .rules {
-        order: 2;
-        max-width: 100%;
-        max-height: 40%;
-        margin-right: 0;
-        margin-top: 0.5rem;
-        flex: 1;
-      }
-      
-      h1 {
-        font-size: 1.2rem;
-        margin-bottom: 0.25rem;
-      }
-      
-      h2 {
-        font-size: 1rem;
-      }
-      
-      .rules p {
-        font-size: 0.8rem;
-      }
-      
-      .grid {
-        grid-gap: 0.4rem;
-      }
-      
-      button {
-        padding: 0.4rem 0.8rem;
-        font-size: 0.9rem;
-      }
-    }
-    
-    /* 가로 모드를 위한 미디어 쿼리 */
-    @media screen and (max-width: 768px) and (orientation: landscape) {
-      body {
-        flex-direction: row;
-      }
-      
-      .rules {
-        flex: 0 0 30%;
-        max-height: 100%;
-        margin-right: 0.5rem;
-      }
-      
-      .game-container {
-        flex: 0 1 70%;
-        margin-bottom: 0;
-      }
-      
-      .rules-editor-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      
-      .card {
-        font-size: calc(8px + 1.5vmin);
-      }
-    }
+   /* 모바일 디바이스를 위한 미디어 쿼리 수정 */
+@media screen and (max-width: 768px) {
+  body {
+    flex-direction: column;
+    padding: 0.5rem;
+    height: 100%;
+    overflow: hidden;
+  }
+  
+  .game-container {
+    order: 1;
+    flex: 0 0 auto;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+  }
+  
+  .rules {
+    order: 2;
+    max-width: 100%;
+    max-height: 50vh; /* 화면 높이의 50%로 제한 */
+    height: auto; /* 자동 높이 조정 */
+    margin-right: 0;
+    margin-top: 0.5rem;
+    flex: 0 1 auto;
+    padding: 0.5rem;
+    overflow-y: auto; /* 내용이 넘치면 스크롤 */
+  }
+  
+  h1 {
+    font-size: 1.2rem;
+    margin-bottom: 0.25rem;
+  }
+  
+  h2 {
+    font-size: 1rem;
+  }
+  
+  .rules p {
+    font-size: 0.8rem;
+  }
+  
+  .grid {
+    grid-gap: 0.4rem;
+    margin: 0.5rem 0;
+  }
+  
+  button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
+  
+  .mini-grid-container {
+    padding: 0.25rem;
+  }
+  
+  .rules-editor-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.3rem;
+    font-size: 0.7rem;
+  }
+  
+  .card {
+    font-size: calc(8px + 2vmin);
+  }
+}
   </style>
 </head>
 <body>
@@ -322,50 +318,54 @@
     }
 
     function renderRuleEditor() {
-      const container = document.getElementById("customGrid");
-      container.innerHTML = "";
-      for (let i = 1; i <= 9; i++) {
-        const cellContainer = document.createElement("div");
-        cellContainer.className = "mini-grid-container";
-        
-        const label = document.createElement("div");
-        label.innerText = `버튼 ${i}`;
-        label.style.fontWeight = "bold";
-        label.style.color = "#333";
-        
-        const grid = document.createElement("div");
-        grid.className = "mini-grid";
-        
-        for (let j = 1; j <= 9; j++) {
-          const cell = document.createElement("div");
-          cell.className = "mini-cell";
-          if (flipMap[i].includes(j)) {
-            cell.classList.add("active");
-          }
-          cell.textContent = j;
-          
-          // 이벤트 핸들링 통합
-          const toggleCell = (e) => {
-            e.preventDefault();
-            if (flipMap[i].includes(j)) {
-              flipMap[i] = flipMap[i].filter(n => n !== j);
-            } else {
-              flipMap[i].push(j);
-            }
-            renderRuleEditor();
-          };
-          
-          cell.onclick = toggleCell;
-          cell.addEventListener('touchstart', toggleCell, { passive: false });
-          
-          grid.appendChild(cell);
-        }
-        
-        cellContainer.appendChild(label);
-        cellContainer.appendChild(grid);
-        container.appendChild(cellContainer);
+  const container = document.getElementById("customGrid");
+  container.innerHTML = "";
+  
+  // 모바일 기기 감지
+  const isMobile = window.innerWidth <= 768;
+  
+  for (let i = 1; i <= 9; i++) {
+    const cellContainer = document.createElement("div");
+    cellContainer.className = "mini-grid-container";
+    
+    const label = document.createElement("div");
+    label.innerText = isMobile ? `${i}` : `버튼 ${i}`; // 모바일에서는 짧게 표시
+    label.style.fontWeight = "bold";
+    label.style.color = "#333";
+    
+    const grid = document.createElement("div");
+    grid.className = "mini-grid";
+    
+    for (let j = 1; j <= 9; j++) {
+      const cell = document.createElement("div");
+      cell.className = "mini-cell";
+      if (flipMap[i].includes(j)) {
+        cell.classList.add("active");
       }
+      cell.textContent = j;
+      
+      // 이벤트 핸들링 통합
+      const toggleCell = (e) => {
+        e.preventDefault();
+        if (flipMap[i].includes(j)) {
+          flipMap[i] = flipMap[i].filter(n => n !== j);
+        } else {
+          flipMap[i].push(j);
+        }
+        renderRuleEditor();
+      };
+      
+      cell.onclick = toggleCell;
+      cell.addEventListener('touchstart', toggleCell, { passive: false });
+      
+      grid.appendChild(cell);
     }
+    
+    cellContainer.appendChild(label);
+    cellContainer.appendChild(grid);
+    container.appendChild(cellContainer);
+  }
+}
 
     // 페이지 로드 시 실행
     document.addEventListener('DOMContentLoaded', () => {
