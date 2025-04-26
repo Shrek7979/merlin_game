@@ -55,6 +55,7 @@
       margin-bottom: 1rem;
       letter-spacing: 1px;
       text-shadow: 0 2px 8px var(--accent + '30');
+      text-align: center;
     }
     .intro-wizard {
       font-size: 6.5rem;
@@ -62,13 +63,17 @@
       margin-bottom: 1.3rem;
       user-select: none;
       text-shadow: 0 2px 6px var(--accent + '70');
+      text-align: center;
     }
     .intro-desc {
       font-size: 1.15rem;
       color: #222;
       margin-bottom: 1.7rem;
-      text-align: center;
+      text-align: left;
       line-height: 1.7;
+      width: 100%;
+      max-width: 400px;
+      margin-left: 0;
     }
     .game-type-container {
       display: flex;
@@ -133,12 +138,16 @@
       font-size: 1.55rem;
       color: #222;
       letter-spacing: 1px;
+      text-align: center;
     }
     .rules-mode-info {
       margin-bottom: 1.2rem;
       color: #3a5bcc;
       font-size: 1.02rem;
-      text-align: center;
+      text-align: left;
+      width: 100%;
+      max-width: 400px;
+      margin-left: 0;
     }
     .rules-editor-grid {
       display: grid;
@@ -155,9 +164,11 @@
       margin: 0.5rem 0 0.2rem 0;
       font-weight: bold;
       color: #333;
-      text-align: center;
+      text-align: left;
       font-size: 1.08rem;
       letter-spacing: 0.5px;
+      width: 100%;
+      max-width: 80px;
     }
     .mini-grid {
       display: grid;
@@ -212,7 +223,7 @@
       flex-direction: column;
       align-items: center;
       width: 100%;
-      max-width: 440px;
+      max-width: 540px;
       margin: 0 auto;
       padding: 1.2rem 1rem 1.5rem 1rem;
     }
@@ -222,6 +233,16 @@
       color: var(--accent);
       letter-spacing: 1px;
       text-shadow: 0 2px 8px #a0c4ff50;
+      text-align: center;
+    }
+    .game-container .circle-title {
+      font-size: 2.6rem;
+      color: #1976d2;
+      font-weight: bold;
+      margin-bottom: 1.2rem;
+      text-align: center;
+      letter-spacing: 2px;
+      text-shadow: 0 2px 12px #1976d250;
     }
     .grid {
       display: grid;
@@ -263,40 +284,60 @@
       filter: brightness(0.96);
       border-color: #2a3a8c;
     }
-    /* 원형 */
     .circle-container {
-      width: 300px;
-      height: 300px;
+      width: 390px;
+      height: 390px;
       position: relative;
-      margin: 2rem auto 1.5rem auto;
+      margin: 2rem auto 0.7rem auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .circle-btn {
       position: absolute;
-      width: 60px;
-      height: 60px;
+      width: 90px;
+      height: 90px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.5rem;
+      font-size: 2.1rem;
       font-weight: bold;
-      transform-origin: 150px 150px;
+      transform-origin: 195px 195px;
       cursor: pointer;
-      border: 2px solid var(--accent);
-      background: var(--card-front);
-      color: white;
-      transition: background 0.18s, color 0.18s, border-color 0.18s;
-      box-shadow: 0 2px 8px #3a5bcc18;
+      border: 2.5px solid #1976d2;
+      background: linear-gradient(135deg, #64b5f6 0%, #1976d2 100%);
+      color: #fff;
+      box-shadow: 0 2px 12px #1976d250;
       user-select: none;
+      transition: background 0.18s, color 0.18s, border-color 0.18s;
     }
     .circle-btn.back {
-      background: var(--card-back);
+      background: linear-gradient(135deg, #90caf9 0%, #1976d2 100%);
       color: #fff;
-      border-color: #2a3a8c;
+      border-color: #0d47a1;
     }
     .circle-btn:active {
       filter: brightness(0.95);
-      border-color: #2a3a8c;
+      border-color: #0d47a1;
+    }
+    .circle-restart {
+      margin: 1.2rem auto 0 auto;
+      display: block;
+      font-size: 1.13rem;
+      border: none;
+      border-radius: 12px;
+      background: var(--button-bg);
+      color: #1976d2;
+      font-weight: bold;
+      padding: 0.9rem 2.5rem;
+      cursor: pointer;
+      transition: background 0.18s, color 0.18s;
+      box-shadow: 0 2px 8px #1976d218;
+    }
+    .circle-restart:hover, .circle-restart:active {
+      background: var(--button-hover);
+      color: #fff;
     }
     .nav-btns {
       display: flex;
@@ -404,10 +445,10 @@
       .rules, .game-container, .intro-container { max-width: 100vw; padding: 1rem 0.3rem; }
       .grid { gap: 0.35rem; }
       .card { font-size: 1.7rem !important; }
-      h1, .intro-title { font-size: 1.4rem; }
+      h1, .intro-title, .game-container .circle-title { font-size: 1.5rem; }
       .intro-wizard { font-size: 5rem; margin-bottom: 1rem; }
-      .circle-container { width: 220px; height: 220px; }
-      .circle-btn { width: 40px; height: 40px; font-size: 1.05rem;}
+      .circle-container { width: 240px; height: 240px; }
+      .circle-btn { width: 50px; height: 50px; font-size: 1.1rem;}
     }
     @media (max-width: 420px) {
       .win-content { padding: 1.2rem 0.5rem 1.2rem 0.5rem;}
@@ -460,10 +501,12 @@
   <!-- 게임 화면 (공통) -->
   <div class="screen" id="screen-game">
     <div class="game-container">
-      <h1 id="game-title">Merlin Game</h1>
+      <h1 id="game-title" style="display:none">Merlin Game</h1>
+      <div class="circle-title" id="circle-title" style="display:none">New Merlin Game</div>
       <div class="grid" id="grid"></div>
       <div class="circle-container" id="circleGrid" style="display:none"></div>
-      <button onclick="resetGame()">🔄 새로 시작</button>
+      <button id="circle-restart" class="circle-restart" style="display:none" onclick="resetGame()">🔄 새로 시작</button>
+      <button id="classic-restart" style="display:none;margin:1.2rem auto 0 auto;display:block;font-size:1.13rem;border:none;border-radius:12px;background:var(--button-bg);color:var(--accent);font-weight:bold;padding:0.9rem 2.5rem;cursor:pointer;transition:background 0.18s,color 0.18s;box-shadow:0 2px 8px #3a5bcc18;">🔄 새로 시작</button>
       <div class="nav-btns">
         <button class="nav-btn" onclick="goToScreen(1)">&lt; 이전</button>
         <button class="nav-btn" disabled>다음 &gt;</button>
@@ -515,7 +558,6 @@
       gameType = type;
       document.getElementById('btn-classic').classList.toggle('selected', type === 'classic');
       document.getElementById('btn-circle').classList.toggle('selected', type === 'circle');
-      // 설명, 규칙 그리드 등 업데이트
       updateIntroDesc();
       selectMode('basic');
     }
@@ -547,7 +589,6 @@
         if (ruleMode === 'basic') {
           for (let i = 1; i <= 9; i++) classicFlipMap[i] = classicBasicFlipMap[i].slice();
         } else {
-          // 대칭 커스텀 (3x3)
           classicFlipMap[1] = classicBaseRules[1].slice();
           classicFlipMap[3] = classicBaseRules[1].map(rotate90);
           classicFlipMap[9] = classicBaseRules[1].map(rotate180);
@@ -562,15 +603,14 @@
         if (ruleMode === 'basic') {
           for (let i = 1; i <= 7; i++) circleFlipMap[i] = circleBasicFlipMap[i].slice();
         } else {
-          // 대칭 커스텀 (원형)
-          // 1,2,4만 입력받고 나머지 대칭(시계방향)
-          circleFlipMap[1] = circleBaseRules[1].slice();
-          circleFlipMap[2] = circleBaseRules[2].slice();
-          circleFlipMap[3] = circleBaseRules[2].map(n => (n%7)+1);
-          circleFlipMap[4] = circleBaseRules[4].slice();
-          circleFlipMap[5] = circleBaseRules[4].map(n => (n%7)+1);
-          circleFlipMap[6] = circleBaseRules[4].map(n => ((n+1)%7)+1);
-          circleFlipMap[7] = circleBaseRules[2].map(n => ((n+4-1)%7)+1);
+          // 원형 커스텀(1,2,4만 직접 지정, 나머지는 시계방향 대칭)
+          circleFlipMap[1] = (circleBaseRules[1]||[]).slice();
+          circleFlipMap[2] = (circleBaseRules[2]||[]).slice();
+          circleFlipMap[3] = (circleBaseRules[2]||[]).map(n => (n%7)+1);
+          circleFlipMap[4] = (circleBaseRules[4]||[]).slice();
+          circleFlipMap[5] = (circleBaseRules[4]||[]).map(n => (n%7)+1);
+          circleFlipMap[6] = (circleBaseRules[4]||[]).map(n => ((n+1)%7)+1);
+          circleFlipMap[7] = (circleBaseRules[2]||[]).map(n => ((n+4-1)%7)+1);
         }
       }
     }
@@ -627,14 +667,14 @@
         if (ruleMode === 'basic') {
           info.innerHTML = '🟦 <b>기본 모드</b>: 각 버튼을 누르면 자기 자신과 양 옆 버튼이 반전됩니다.<br>아래 표에서 각 버튼을 눌렀을 때 어떤 카드가 반전되는지 확인하세요.';
         } else {
-          info.innerHTML = '🟦 <b>커스텀 모드</b>: B1, B2, B4의 규칙을 직접 설정할 수 있습니다.<br>나머지 버튼은 대칭으로 자동 결정됩니다.';
+          info.innerHTML = '🟦 <b>커스텀 모드</b>: 아래 원형 배열에서 각 버튼별로 반전되는 버튼을 직접 선택하세요.<br>나머지 버튼은 시계방향 대칭으로 자동 결정됩니다.';
         }
         container.className = 'rules-editor-grid circle';
         const ruleNames = {1:'B1',2:'B2',3:'B3',4:'B4',5:'B5',6:'B6',7:'B7'};
         html = Array.from({length:7},(_,i)=>i+1).map(btn=>`
           <div>
             <div class="rule-label">${ruleNames[btn]}</div>
-            <div class="mini-grid circle">
+            <div class="mini-grid circle" style="width:120px;">
               ${Array.from({length:7},(_,j)=>{
                 const cellNum = j+1;
                 let isActive, isEditable=false;
@@ -643,8 +683,8 @@
                 }else{
                   isEditable = [1,2,4].includes(btn);
                   isActive = isEditable
-                    ? circleBaseRules[btn]?.includes(cellNum)
-                    : circleFlipMap[btn]?.includes(cellNum);
+                    ? (circleBaseRules[btn]||[]).includes(cellNum)
+                    : (circleFlipMap[btn]||[]).includes(cellNum);
                 }
                 const cellClass = [
                   'mini-cell',
@@ -681,9 +721,12 @@
 
     // --- 게임 화면 ---
     function renderGame() {
-      document.getElementById('game-title').textContent = (gameType==='classic'?'Merlin Game':'New Merlin Game');
+      document.getElementById('game-title').style.display = gameType==='classic'?'block':'none';
+      document.getElementById('circle-title').style.display = gameType==='circle'?'block':'none';
       document.getElementById('grid').style.display = gameType==='classic'?'grid':'none';
-      document.getElementById('circleGrid').style.display = gameType==='circle'?'block':'none';
+      document.getElementById('circleGrid').style.display = gameType==='circle'?'flex':'none';
+      document.getElementById('circle-restart').style.display = gameType==='circle'?'block':'none';
+      document.getElementById('classic-restart').style.display = gameType==='classic'?'block':'none';
       if (gameType==='classic') renderGrid();
       else renderCircleGrid();
     }
@@ -697,6 +740,7 @@
         card.onclick = () => handleClassicClick(i+1);
         grid.appendChild(card);
       }
+      document.getElementById('classic-restart').onclick = resetGame;
     }
     function handleClassicClick(num) {
       classicFlipMap[num].forEach(n => cardStates[n-1] = !cardStates[n-1]);
@@ -706,7 +750,7 @@
     function renderCircleGrid() {
       const container = document.getElementById('circleGrid');
       container.innerHTML = '';
-      const N = 7, R = 120, cx = 150, cy = 150, r = 60;
+      const N = 7, R = 145, cx = 195, cy = 195, r = 90;
       for(let i=0;i<N;i++){
         const angle = (i/N)*2*Math.PI - Math.PI/2;
         const x = cx + R*Math.cos(angle) - r/2;
