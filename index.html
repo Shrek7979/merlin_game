@@ -54,7 +54,6 @@
       color: var(--accent);
       margin-bottom: 1rem;
       letter-spacing: 1px;
-      text-shadow: 0 2px 8px var(--accent + '30');
       text-align: center;
     }
     .intro-wizard {
@@ -62,7 +61,6 @@
       line-height: 1;
       margin-bottom: 1.3rem;
       user-select: none;
-      text-shadow: 0 2px 6px var(--accent + '70');
       text-align: center;
     }
     .intro-desc {
@@ -156,12 +154,7 @@
       width: 100%;
       justify-items: center;
     }
-    .rules-editor-grid.circle {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0;
-    }
+    .rules-editor-grid.circle { display: none; }
     .circle-rule-editor {
       display: flex;
       flex-direction: column;
@@ -601,7 +594,7 @@
       1: [7,1,2], 2: [1,2,3], 3: [2,3,4], 4: [3,4,5],
       5: [4,5,6], 6: [5,6,7], 7: [6,7,1]
     };
-    let circleBaseRules = { 1: [1,2,7], 2: [1,2,3], 4: [3,4,5] }; // 기본값(기본모드와 동일)
+    let circleBaseRules = { 1: [1,2,7], 2: [1,2,3], 4: [3,4,5] }; // 기본값
     let circleFlipMap = {};
     let circleEditBtn = 1; // 커스텀 모드에서 편집중인 버튼
 
@@ -723,7 +716,7 @@
         circleRuleEditor.innerHTML = '';
       } else {
         if (ruleMode === 'basic') {
-          info.innerHTML = '🟦 <b>기본 모드</b>: 각 버튼을 누르면 자기 자신과 양 옆 버튼이 반전됩니다.<br>아래 표에서 각 버튼을 눌렀을 때 어떤 카드가 반전되는지 확인하세요.';
+          info.innerHTML = '🟦 <b>기본 모드</b>: 각 버튼을 누르면 자기 자신과 양 옆 버튼이 반전됩니다.<br>아래 원형판에서 각 버튼을 눌렀을 때 어떤 카드가 반전되는지 확인하세요.';
           renderCircleRuleEditor(false);
         } else {
           info.innerHTML = '🟦 <b>커스텀 모드</b>: 아래 원형 배열에서 각 버튼을 클릭해 반전 대상을 직접 선택하세요.<br>나머지 버튼은 시계방향 대칭으로 자동 결정됩니다.<br><span style="color:#1976d2">편집할 버튼을 먼저 선택한 뒤, 반전 대상을 클릭하세요.</span>';
@@ -746,7 +739,7 @@
     function renderCircleRuleEditor(isCustom) {
       const N = 7, R = 110, cx = 145, cy = 145, r = 58;
       let html = `<div class="circle-rule-editor"><div class="circle-rule-board" id="circleRuleBoard" style="width:290px;height:290px;position:relative;margin:0 auto;"></div>`;
-      if(isCustom) html += `<div class="circle-rule-desc">편집할 버튼을 먼저 클릭하세요.<br>노란색 버튼이 현재 편집중입니다.<br>파란색(선택) 버튼을 클릭해 반전 대상을 토글하세요.</div>`;
+      if(isCustom) html += `<div class="circle-rule-desc">편집할 버튼을 먼저 클릭하세요.<br>노란색 버튼이 편집중입니다.<br>파란색(선택) 버튼을 클릭해 반전 대상을 토글하세요.</div>`;
       html += `</div>`;
       document.getElementById('circleRuleEditor').innerHTML = html;
       const board = document.getElementById('circleRuleBoard');
@@ -761,32 +754,28 @@
         btn.style.top = y+'px';
         if(isCustom) {
           if(circleEditBtn===i+1) btn.classList.add('selected');
-          btn.onclick = ()=>{ circleEditBtn=i+1; renderCircleRuleEditor(true);}
-        }
-        board.appendChild(btn);
-      }
-      // 반전 대상 표시 (isCustom)
-      if(isCustom) {
-        // 현재 편집중인 버튼의 반전대상 표시
-        const arr = circleBaseRules[circleEditBtn]||[];
-        arr.forEach(idx=>{
-          const sel = board.children[idx-1];
-          if(sel) sel.classList.add('target');
-        });
-        // 반전 대상 토글
-        for(let i=0;i<N;i++) {
-          if(i+1===circleEditBtn) continue; // 자기 자신은 항상 포함
-          board.children[i].onclick = ()=>{
+          if((circleBaseRules[circleEditBtn]||[]).includes(i+1)) btn.classList.add('target');
+          btn.onclick = ()=>{
+            if(i+1===circleEditBtn) {
+              // 편집할 버튼 선택
+              circleEditBtn=i+1;
+              renderCircleRuleEditor(true);
+              return;
+            }
             let arr = circleBaseRules[circleEditBtn]||[];
             if(arr.includes(i+1)) arr = arr.filter(n=>n!==i+1);
             else arr = [...arr,i+1];
-            // 항상 자기 자신 포함
+            // 자기 자신은 항상 포함
             if(!arr.includes(circleEditBtn)) arr.push(circleEditBtn);
             circleBaseRules[circleEditBtn]=arr;
             updateFlipMap();
             renderCircleRuleEditor(true);
           };
+        } else {
+          // 기본 모드: 반전대상은 색상으로만 표시
+          if(circleBasicFlipMap[circleEditBtn].includes(i+1)) btn.classList.add('target');
         }
+        board.appendChild(btn);
       }
     }
 
@@ -807,4 +796,78 @@
       for(let i=0;i<9;i++){
         const card = document.createElement('div');
         card.className = `card ${cardStates[i] ? '' : 'back'}`;
-        card.textContent = cardStates[i] ? i+1 :
+        card.textContent = cardStates[i] ? i+1 : 'X';
+        card.onclick = () => handleClassicClick(i+1);
+        grid.appendChild(card);
+      }
+      document.getElementById('classic-restart').onclick = resetGame;
+    }
+    function handleClassicClick(num) {
+      classicFlipMap[num].forEach(n => cardStates[n-1] = !cardStates[n-1]);
+      renderGrid();
+      if (cardStates.every(s=>s)) setTimeout(showWinModal, 100);
+    }
+    function renderCircleGrid() {
+      const container = document.getElementById('circleGrid');
+      container.innerHTML = '';
+      const N = 7, R = 145, cx = 195, cy = 195, r = 90;
+      for(let i=0;i<N;i++){
+        const angle = (i/N)*2*Math.PI - Math.PI/2;
+        const x = cx + R*Math.cos(angle) - r/2;
+        const y = cy + R*Math.sin(angle) - r/2;
+        const btn = document.createElement('div');
+        btn.className = `circle-btn ${cardStates[i] ? '' : 'back'}`;
+        btn.textContent = cardStates[i] ? (i+1) : 'X';
+        btn.style.left = x+'px';
+        btn.style.top = y+'px';
+        btn.onclick = () => handleCircleClick(i+1);
+        container.appendChild(btn);
+      }
+    }
+    function handleCircleClick(num) {
+      circleFlipMap[num].forEach(n => cardStates[((n-1)+7)%7] = !cardStates[((n-1)+7)%7]);
+      renderCircleGrid();
+      if (cardStates.every(s=>s)) setTimeout(showWinModal, 100);
+    }
+
+    // --- 네비게이션 ---
+    function goToScreen(idx) {
+      ['intro','rule','game'].forEach((name, i) => {
+        document.getElementById('screen-' + name).classList.toggle('active', i === idx);
+      });
+      if (idx === 1) {
+        updateFlipMap();
+        renderRuleEditor();
+      }
+      if (idx === 2) {
+        updateFlipMap();
+        resetGame();
+        renderGame();
+      }
+    }
+
+    // --- 게임 상태/승리 ---
+    function resetGame() {
+      if (gameType==='classic') cardStates = Array(9).fill().map(()=>Math.random()<0.5);
+      else cardStates = Array(7).fill().map(()=>Math.random()<0.5);
+      renderGame();
+    }
+    function showWinModal() {
+      document.getElementById('winModal').style.display = 'flex';
+    }
+    function closeWinModal() {
+      document.getElementById('winModal').style.display = 'none';
+      goToScreen(0);
+      resetGame();
+    }
+
+    // --- 초기화 ---
+    document.addEventListener('DOMContentLoaded', () => {
+      updateIntroDesc();
+      updateFlipMap();
+      renderRuleEditor();
+      renderGame();
+    });
+  </script>
+</body>
+</html>
