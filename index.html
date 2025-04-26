@@ -1,25 +1,27 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Merlin Game</title>
   <style>
     :root {
-      --main-bg: linear-gradient(135deg, #f8ffae 0%, #43cea2 100%);
-      --card-front: linear-gradient(135deg, #ffb347 0%, #ffcc33 100%);
-      --card-back: linear-gradient(135deg, #4e54c8 0%, #8f94fb 100%);
-      --card-shadow: 0 4px 16px rgba(60,60,60,0.15);
-      --accent: #1abc9c;
-      --mini-active: #1abc9c;
-      --mini-inactive: #f8ffae;
-      --mini-border: #888;
-      --mini-readonly: #e0e0e0;
-      --button-bg: linear-gradient(90deg, #f8ffae 0%, #43cea2 100%);
-      --button-hover: linear-gradient(90deg, #43cea2 0%, #f8ffae 100%);
-      --button-shadow: 0 2px 8px rgba(67, 206, 162, 0.18);
+      /* 블루 계열 색상, 그라데이션 강도 완화 */
+      --main-bg: linear-gradient(135deg, #d0e4ff 0%, #a0c4ff 100%);
+      --card-front: linear-gradient(135deg, #6ea8fe 0%, #a3bffa 100%);
+      --card-back: linear-gradient(135deg, #3a5bcc 0%, #5a7bd8 100%);
+      --card-shadow: 0 4px 16px rgba(30, 60, 120, 0.15);
+      --accent: #3a5bcc;
+      --mini-active: #3a5bcc;
+      --mini-inactive: #d0e4ff;
+      --mini-border: #6a8cd8;
+      --mini-readonly: #c8d9ff;
+      --button-bg: linear-gradient(90deg, #a0c4ff 0%, #6ea8fe 100%);
+      --button-hover: linear-gradient(90deg, #6ea8fe 0%, #a0c4ff 100%);
+      --button-shadow: 0 2px 8px rgba(58, 91, 204, 0.18);
     }
-    html, body {
+    html,
+    body {
       height: 100%;
     }
     body {
@@ -43,14 +45,20 @@
       display: block;
     }
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(30px);}
-      to { opacity: 1; transform: translateY(0);}
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
     /* 소개 화면 */
     .intro-container {
-      background: rgba(255,255,255,0.87);
+      background: rgba(240, 248, 255, 0.85);
       border-radius: 18px;
-      box-shadow: 0 4px 16px rgba(67,206,162,0.13);
+      box-shadow: 0 4px 16px rgba(58, 91, 204, 0.13);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -62,10 +70,18 @@
     .intro-title {
       font-size: 2.1rem;
       font-weight: bold;
-      color: #1abc9c;
-      margin-bottom: 1.2rem;
+      color: var(--accent);
+      margin-bottom: 1rem;
       letter-spacing: 1px;
-      text-shadow: 0 2px 8px #1abc9c30;
+      text-shadow: 0 2px 8px var(--accent + '30');
+    }
+    /* 마법사 이모지 큰 사이즈 */
+    .intro-wizard {
+      font-size: 6.5rem;
+      line-height: 1;
+      margin-bottom: 1.3rem;
+      user-select: none;
+      text-shadow: 0 2px 6px var(--accent + '70');
     }
     .intro-desc {
       font-size: 1.15rem;
@@ -76,9 +92,9 @@
     }
     /* 규칙 화면 */
     .rules {
-      background: rgba(255,255,255,0.9);
+      background: rgba(240, 248, 255, 0.9);
       border-radius: 18px;
-      box-shadow: 0 4px 16px rgba(67,206,162,0.11);
+      box-shadow: 0 4px 16px rgba(58, 91, 204, 0.11);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -113,9 +129,9 @@
       grid-template-columns: repeat(3, 1fr);
       gap: 2px;
       margin-top: 0.1rem;
-      background: #f8ffae;
+      background: var(--mini-inactive);
       border-radius: 7px;
-      box-shadow: 0 1px 4px #43cea230;
+      box-shadow: 0 1px 4px var(--accent + '30');
       padding: 2px;
     }
     .mini-cell {
@@ -136,9 +152,9 @@
     .mini-cell.active {
       background: var(--mini-active);
       color: #fff;
-      border-color: #1abc9c;
+      border-color: var(--accent);
       font-weight: bold;
-      box-shadow: 0 0 6px #1abc9c70;
+      box-shadow: 0 0 6px var(--accent + '70');
     }
     .mini-cell.read-only {
       background: var(--mini-readonly);
@@ -150,9 +166,9 @@
     }
     /* 게임 화면 */
     .game-container {
-      background: rgba(255,255,255,0.85);
+      background: rgba(240, 248, 255, 0.85);
       border-radius: 18px;
-      box-shadow: 0 4px 16px rgba(67,206,162,0.11);
+      box-shadow: 0 4px 16px rgba(58, 91, 204, 0.11);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -164,29 +180,29 @@
     h1 {
       font-size: 2.2rem;
       margin-bottom: 1.2rem;
-      color: #1abc9c;
+      color: var(--accent);
       letter-spacing: 1px;
-      text-shadow: 0 2px 8px #43cea230;
+      text-shadow: 0 2px 8px #a0c4ff50;
     }
     .grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 0.5rem;
-      width: 80%;          /* 20% 더 작게 */
-      max-width: 320px;    /* 원래 400px에서 320px로 축소 */
+      width: 80%;
+      max-width: 320px;
       margin: 0.3rem auto 0 auto;
-      background: #fff;
+      background: #f0f6ff;
       border-radius: 12px;
-      box-shadow: 0 2px 10px #1abc9c20;
+      box-shadow: 0 2px 10px #3a5bcc30;
       padding: 0.7rem 0.2rem;
     }
     .card {
       aspect-ratio: 1;
-      font-size: 2.6rem !important; /* 20% 축소 */
+      font-size: 2.6rem !important;
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 2.5px solid #1abc9c;
+      border: 2.5px solid var(--accent);
       border-radius: 14px;
       cursor: pointer;
       font-weight: bold;
@@ -200,13 +216,13 @@
     .card.back {
       background: var(--card-back);
       color: #fff;
-      border-color: #4e54c8;
-      text-shadow: 0 2px 8px #4e54c880;
+      border-color: #2a3a8c;
+      text-shadow: 0 2px 8px #2a3a8c88;
     }
     .card:active {
-      box-shadow: 0 2px 8px #1abc9c70;
+      box-shadow: 0 2px 8px var(--accent + '70');
       filter: brightness(0.96);
-      border-color: #16a085;
+      border-color: #2a3a8c;
     }
     /* 공통 네비게이션 버튼 */
     .nav-btns {
@@ -220,7 +236,7 @@
       border: none;
       border-radius: 10px;
       background: var(--button-bg);
-      color: #1abc9c;
+      color: var(--accent);
       font-weight: bold;
       letter-spacing: 1px;
       box-shadow: var(--button-shadow);
@@ -232,10 +248,11 @@
       opacity: 0.5;
       cursor: not-allowed;
     }
-    .nav-btn:hover, .nav-btn:active {
+    .nav-btn:hover,
+    .nav-btn:active {
       background: var(--button-hover);
       color: #fff;
-      box-shadow: 0 2px 12px #1abc9c60;
+      box-shadow: 0 2px 12px var(--accent + '60');
     }
     button {
       outline: none;
@@ -243,19 +260,22 @@
     /* 승리 애니메이션 */
     .win-modal {
       position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       z-index: 999;
-      background: rgba(0,0,0,0.25);
+      background: rgba(0, 0, 0, 0.25);
       display: flex;
       align-items: center;
       justify-content: center;
       animation: fadeIn 0.5s;
     }
     .win-content {
-      background: #fffbe6;
+      background: #e6f0ff;
       border-radius: 30px;
       padding: 2.5rem 2rem 2rem 2rem;
-      box-shadow: 0 8px 32px #1abc9c50;
+      box-shadow: 0 8px 32px #3a5bcc50;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -263,9 +283,17 @@
       position: relative;
     }
     @keyframes popIn {
-      0% { transform: scale(0.7); opacity: 0;}
-      70% { transform: scale(1.08);}
-      100% { transform: scale(1); opacity: 1;}
+      0% {
+        transform: scale(0.7);
+        opacity: 0;
+      }
+      70% {
+        transform: scale(1.08);
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
     }
     .win-emoji {
       font-size: 3.5rem;
@@ -273,13 +301,18 @@
       margin-bottom: 0.7rem;
     }
     @keyframes bounce {
-      0%,100% { transform: translateY(0);}
-      50% { transform: translateY(-18px);}
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-18px);
+      }
     }
     .win-title {
       font-size: 2rem;
       font-weight: bold;
-      color: #1abc9c;
+      color: var(--accent);
       margin-bottom: 0.5rem;
       letter-spacing: 1px;
       text-align: center;
@@ -295,27 +328,50 @@
       border: none;
       border-radius: 8px;
       background: var(--button-bg);
-      color: #1abc9c;
+      color: var(--accent);
       font-weight: bold;
       padding: 0.6rem 1.5rem;
       cursor: pointer;
-      box-shadow: 0 2px 8px #1abc9c40;
+      box-shadow: 0 2px 8px var(--accent + '40');
       transition: background 0.18s, color 0.18s;
     }
-    .win-close:hover, .win-close:active {
+    .win-close:hover,
+    .win-close:active {
       background: var(--button-hover);
       color: #fff;
     }
     @media (max-width: 700px) {
-      .screen { padding: 1.2rem 0.2rem 1.5rem 0.2rem; }
-      .rules, .game-container, .intro-container { max-width: 100vw; padding: 1rem 0.3rem; }
-      .grid { gap: 0.35rem; }
-      .card { font-size: 1.7rem !important; }
-      h1, .intro-title { font-size: 1.4rem; }
+      .screen {
+        padding: 1.2rem 0.2rem 1.5rem 0.2rem;
+      }
+      .rules,
+      .game-container,
+      .intro-container {
+        max-width: 100vw;
+        padding: 1rem 0.3rem;
+      }
+      .grid {
+        gap: 0.35rem;
+      }
+      .card {
+        font-size: 1.7rem !important;
+      }
+      h1,
+      .intro-title {
+        font-size: 1.4rem;
+      }
+      .intro-wizard {
+        font-size: 5rem;
+        margin-bottom: 1rem;
+      }
     }
     @media (max-width: 420px) {
-      .win-content { padding: 1.2rem 0.5rem 1.2rem 0.5rem;}
-      .screen { padding: 0.4rem 0.1rem;}
+      .win-content {
+        padding: 1.2rem 0.5rem 1.2rem 0.5rem;
+      }
+      .screen {
+        padding: 0.4rem 0.1rem;
+      }
     }
   </style>
 </head>
@@ -324,11 +380,14 @@
   <div class="screen active" id="screen-intro">
     <div class="intro-container">
       <div class="intro-title">Merlin Game</div>
+      <div class="intro-wizard">🧙‍♂️</div>
       <div class="intro-desc">
-        멀린게임은 3×3 격자의 9개의 버튼을 각각 눌렀을 때,<br>
-        <b>정해진 규칙</b>에 따라 반전되는 게임입니다.<br><br>
-        각각의 버튼에 규칙을 부여하고 실제로 게임을 진행해 보세요.<br><br>
-        <span style="color:#1abc9c;font-weight:bold;">1부터 9의 숫자가 모두 보이면 승리합니다. ^^</span>
+        멀린게임은 3×3 격자의 9개의 버튼을 각각 눌렀을 때,<br />
+        <b>정해진 규칙</b>에 따라 반전되는 게임입니다.<br /><br />
+        각각의 버튼에 규칙을 부여하고 실제로 게임을 진행해 보세요.<br /><br />
+        <span style="color: var(--accent); font-weight: bold"
+          >1부터 9의 숫자가 모두 보이면 승리합니다. ^^</span
+        >
       </div>
       <div class="nav-btns">
         <button class="nav-btn" disabled>&lt; 이전</button>
@@ -352,6 +411,7 @@
     <div class="game-container">
       <h1>Merlin Game</h1>
       <div class="grid" id="grid"></div>
+      <br>
       <button onclick="resetGame()">🔄 새로 시작</button>
       <div class="nav-btns">
         <button class="nav-btn" onclick="goToScreen(1)">&lt; 이전</button>
@@ -360,28 +420,37 @@
     </div>
   </div>
   <!-- 승리 모달 -->
-  <div id="winModal" class="win-modal" style="display:none;">
+  <div id="winModal" class="win-modal" style="display: none">
     <div class="win-content">
       <div class="win-emoji">✨🧙‍♂️✨</div>
       <div class="win-title">마법 성공!</div>
       <div class="win-msg">
-        모든 카드를 앞면으로 뒤집었습니다!<br>
-        <span style="font-size:1.2em;">🎩 "Merlin"도 감탄하는 실력!</span><br>
-        <span style="color:#ffb347;">다시 도전해볼까요?</span>
+        모든 카드를 앞면으로 뒤집었습니다!<br />
+        <span style="font-size: 1.2em">🎩 "Merlin"도 감탄하는 실력!</span
+        ><br />
+        <span style="color: #6ea8fe">다시 도전해볼까요?</span>
       </div>
       <button class="win-close" onclick="closeWinModal()">처음으로</button>
     </div>
   </div>
   <script>
     // 3x3 격자 좌표 변환 (1~9 <-> [row, col])
-    function idxToRC(idx) { return [Math.floor((idx-1)/3), (idx-1)%3]; }
-    function rcToIdx(r, c) { return r*3 + c + 1; }
+    function idxToRC(idx) {
+      return [Math.floor((idx - 1) / 3), (idx - 1) % 3];
+    }
+    function rcToIdx(r, c) {
+      return r * 3 + c + 1;
+    }
     function rotate90(idx) {
       const [r, c] = idxToRC(idx);
       return rcToIdx(c, 2 - r);
     }
-    function rotate180(idx) { return rotate90(rotate90(idx)); }
-    function rotate270(idx) { return rotate90(rotate180(idx)); }
+    function rotate180(idx) {
+      return rotate90(rotate90(idx));
+    }
+    function rotate270(idx) {
+      return rotate90(rotate180(idx));
+    }
 
     // 규칙 에디터에서 사용할 대표 규칙(B1, B2, B5)
     let baseRules = {
@@ -403,10 +472,12 @@
       flipMap[5] = baseRules[5].slice();
     }
 
-    let cardStates = Array(9).fill().map(() => Math.random() < 0.5);
+    let cardStates = Array(9)
+      .fill()
+      .map(() => Math.random() < 0.5);
 
     function renderGrid() {
-      const grid = document.getElementById("grid");
+      const grid = document.getElementById('grid');
       grid.innerHTML = '';
       cardStates.forEach((state, i) => {
         const card = document.createElement('div');
@@ -418,47 +489,51 @@
     }
 
     function handleClick(num) {
-      flipMap[num].forEach(n => cardStates[n - 1] = !cardStates[n - 1]);
+      flipMap[num].forEach((n) => (cardStates[n - 1] = !cardStates[n - 1]));
       renderGrid();
-      if (cardStates.every(s => s)) setTimeout(showWinModal, 100);
+      if (cardStates.every((s) => s)) setTimeout(showWinModal, 100);
     }
 
     function resetGame() {
-      cardStates = Array(9).fill().map(() => Math.random() < 0.5);
+      cardStates = Array(9)
+        .fill()
+        .map(() => Math.random() < 0.5);
       renderGrid();
     }
 
     function renderRuleEditor() {
-      const container = document.getElementById("customGrid");
+      const container = document.getElementById('customGrid');
       const ruleNames = {
-        1: "B1<br><small>(편집 가능)</small>",
-        2: "B2<br><small>(편집 가능)</small>",
-        5: "B5<br><small>(편집 가능)</small>",
-        3: "B3<br><small>(자동)</small>",
-        4: "B4<br><small>(자동)</small>",
-        6: "B6<br><small>(자동)</small>",
-        7: "B7<br><small>(자동)</small>",
-        8: "B8<br><small>(자동)</small>",
-        9: "B9<br><small>(자동)</small>"
+        1: 'B1<br><small>(편집 가능)</small>',
+        2: 'B2<br><small>(편집 가능)</small>',
+        5: 'B5<br><small>(편집 가능)</small>',
+        3: 'B3<br><small>(자동)</small>',
+        4: 'B4<br><small>(자동)</small>',
+        6: 'B6<br><small>(자동)</small>',
+        7: 'B7<br><small>(자동)</small>',
+        8: 'B8<br><small>(자동)</small>',
+        9: 'B9<br><small>(자동)</small>',
       };
-      container.innerHTML = Array.from({length: 9}, (_, i) => i + 1).map(btn => `
+      container.innerHTML = Array.from({ length: 9 }, (_, i) => i + 1)
+        .map(
+          (btn) => `
         <div>
           <div class="rule-label">${ruleNames[btn]}</div>
           <div class="mini-grid">
-            ${Array.from({length: 9}, (_, j) => {
+            ${Array.from({ length: 9 }, (_, j) => {
               const cellNum = j + 1;
               const isEditable = [1, 2, 5].includes(btn);
-              const isActive = isEditable 
-                ? baseRules[btn].includes(cellNum) 
+              const isActive = isEditable
+                ? baseRules[btn].includes(cellNum)
                 : flipMap[btn].includes(cellNum);
               const cellClass = [
-                "mini-cell",
-                isActive ? "active" : "",
-                isEditable ? "" : "read-only"
-              ].join(" ");
+                'mini-cell',
+                isActive ? 'active' : '',
+                isEditable ? '' : 'read-only',
+              ].join(' ');
               return `
                 <div class="${cellClass}" 
-                  ${isEditable ? `onclick="toggleRule(${btn}, ${cellNum})"` : ""}
+                  ${isEditable ? `onclick="toggleRule(${btn}, ${cellNum})"` : ''}
                 >
                   ${isActive ? '●' : '○'}
                 </div>
@@ -466,10 +541,12 @@
             }).join('')}
           </div>
         </div>
-      `).join('');
+      `
+        )
+        .join('');
     }
 
-    window.toggleRule = function(ruleNum, targetNum) {
+    window.toggleRule = function (ruleNum, targetNum) {
       const arr = baseRules[ruleNum];
       const idx = arr.indexOf(targetNum);
       if (idx > -1) arr.splice(idx, 1);
@@ -480,7 +557,7 @@
 
     // 화면 전환 (0: 소개, 1: 규칙, 2: 게임)
     function goToScreen(idx) {
-      ['intro','rule','game'].forEach((name, i) => {
+      ['intro', 'rule', 'game'].forEach((name, i) => {
         document.getElementById('screen-' + name).classList.toggle('active', i === idx);
       });
       if (idx === 1) {
