@@ -2,28 +2,54 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   <title>Merlin Game</title>
   <style>
     :root {
       --main-bg: linear-gradient(135deg, #d0e4ff 0%, #a0c4ff 100%);
       --card-front: linear-gradient(135deg, #1976d2 0%, #64b5f6 100%);
       --card-back: linear-gradient(135deg, #e3e8ee 0%, #b0bec5 100%);
-      --accent: #1976d2;
+      --accent: #7c3aed;
+      --circle-title: #ff7043;
       --button-bg: linear-gradient(90deg, #a0c4ff 0%, #64b5f6 100%);
       --button-hover: linear-gradient(90deg, #64b5f6 0%, #a0c4ff 100%);
     }
-    body {
-      min-height: 100vh;
-      background: var(--main-bg);
-      font-family: 'Segoe UI', 'Apple SD Gothic Neo', Arial, sans-serif;
+    html, body {
+      height: 100%;
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
+      background: var(--main-bg);
+      overflow-x: hidden;
+    }
+    body {
+      font-family: 'Segoe UI', 'Apple SD Gothic Neo', Arial, sans-serif;
+      min-height: 100vh;
+    }
+    .screen {
+      width: 100vw;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 2rem 0.5rem;
+      box-sizing: border-box;
+      min-height: 80vh;
+      display: none;
+    }
+    .screen.active { display: block; }
+    .intro-container, .rules, .game-container {
+      width: 100%;
+      max-width: 440px;
+      margin: 0 auto;
+      border-radius: 18px;
+      background: rgba(240,248,255,0.9);
+      box-shadow: 0 4px 16px rgba(58,91,204,0.11);
+      padding: 1.2rem 0.7rem 1.5rem 0.7rem;
+      box-sizing: border-box;
     }
     .intro-title {
       font-size: 2.1rem;
       font-weight: bold;
-      color: #7c3aed;
+      color: var(--accent);
       margin-bottom: 1rem;
       letter-spacing: 1px;
       text-align: center;
@@ -31,34 +57,402 @@
     h1 {
       font-size: 2.2rem;
       margin-bottom: 1.2rem;
-      color: #7c3aed;
+      color: var(--accent);
       letter-spacing: 1px;
       text-shadow: 0 2px 8px #a0c4ff50;
       text-align: center;
     }
     .game-container .circle-title {
       font-size: 2.7rem;
-      color: #ff7043;
+      color: var(--circle-title);
       font-weight: bold;
       margin-bottom: 1.2rem;
       text-align: center;
       letter-spacing: 2px;
       text-shadow: 0 2px 12px #ff704360;
     }
-    /* 이하 기존 스타일 동일 (생략 가능) */
-    /* ...기존 스타일 유지... */
-    .mini-cell.demo-highlight {
-      background: #ffd700 !important;
-      color: #1a237e !important;
-      transition: all 0.3s;
+    .intro-wizard { font-size: 7vw; margin-bottom: 1.3rem; text-align: center;}
+    .intro-desc {
+      font-size: 1.15rem;
+      color: #222;
+      margin-bottom: 1.7rem;
+      text-align: left;
+      line-height: 1.7;
+      width: 100%;
+      max-width: 400px;
+      margin-left: 0;
     }
-    .circle-rule-btn.demo-highlight {
-      background: #ffd700 !important;
-      color: #1a237e !important;
-      border-color: #ff7043 !important;
-      transition: all 0.3s;
+    .game-type-container {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      margin: 1.5rem 0 2rem 0;
     }
-    /* 기타 기존 스타일 생략 */
+    .game-type-btn {
+      padding: 1.2rem 1.5rem;
+      border-radius: 15px;
+      font-size: 1.13rem;
+      background: var(--button-bg);
+      border: 3px solid var(--accent);
+      cursor: pointer;
+      color: var(--accent);
+      font-weight: bold;
+      transition: background 0.18s, color 0.18s, border-color 0.18s;
+    }
+    .game-type-btn.selected, .game-type-btn:hover, .game-type-btn:active {
+      background: var(--accent);
+      color: #fff;
+      border-color: #0d47a1;
+    }
+    .mode-select {
+      display: flex;
+      gap: 1.2rem;
+      margin-bottom: 2rem;
+      margin-top: 0.5rem;
+      justify-content: center;
+    }
+    .mode-btn {
+      font-size: 1.08rem;
+      border: 2px solid var(--accent);
+      border-radius: 12px;
+      background: #fff;
+      color: var(--accent);
+      font-weight: bold;
+      padding: 0.7rem 2.2rem;
+      cursor: pointer;
+      transition: background 0.18s, color 0.18s, border-color 0.18s;
+      box-shadow: 0 2px 8px #3a5bcc18;
+    }
+    .mode-btn.selected, .mode-btn:hover, .mode-btn:active {
+      background: var(--accent);
+      color: #fff;
+      border-color: #0d47a1;
+    }
+    .rules {
+      background: rgba(240, 248, 255, 0.9);
+      border-radius: 18px;
+      box-shadow: 0 4px 16px rgba(58, 91, 204, 0.11);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 440px;
+      margin: 0 auto;
+      padding: 1.2rem 1rem 1.5rem 1rem;
+    }
+    .rules h2 {
+      margin-bottom: 1.2rem;
+      font-size: 1.55rem;
+      color: var(--circle-title);
+      letter-spacing: 1px;
+      text-align: center;
+    }
+    .rules-mode-info {
+      margin-bottom: 1.2rem;
+      color: var(--accent);
+      font-size: 1.02rem;
+      text-align: left;
+      width: 100%;
+      max-width: 400px;
+      margin-left: 0;
+    }
+    .rules-editor-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.2rem;
+      width: 100%;
+      justify-items: center;
+    }
+    .circle-rule-editor {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 1.5rem 0 1rem 0;
+      width: 100%;
+    }
+    .circle-rule-board {
+      position: relative;
+      width: 60vw;
+      max-width: 290px;
+      height: 60vw;
+      max-height: 290px;
+      margin-bottom: 0.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .circle-rule-btn {
+      position: absolute;
+      width: 11vw;
+      max-width: 58px;
+      height: 11vw;
+      max-height: 58px;
+      border-radius: 50%;
+      background: #1976d2;
+      color: #fff;
+      font-size: 1.35rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2.5px solid #fff;
+      cursor: pointer;
+      transition: background 0.18s, color 0.18s;
+      box-shadow: 0 2px 8px #1976d250;
+      user-select: none;
+    }
+    .circle-rule-btn.selected {
+      background: #ffb300;
+      color: #1976d2;
+      border-color: #ffb300;
+    }
+    .circle-rule-btn.target {
+      background: #fff;
+      color: #1976d2;
+      border-color: #ffb300;
+    }
+    .circle-rule-desc {
+      font-size: 1.02rem;
+      color: #1976d2;
+      margin-bottom: 0.5rem;
+      text-align: left;
+      width: 100%;
+      max-width: 400px;
+    }
+    .rule-label {
+      margin: 0.5rem 0 0.2rem 0;
+      font-weight: bold;
+      color: #333;
+      text-align: left;
+      font-size: 1.08rem;
+      letter-spacing: 0.5px;
+      width: 100%;
+      max-width: 80px;
+    }
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      margin-top: 0.1rem;
+      background: #e8f0ff;
+      border-radius: 7px;
+      box-shadow: 0 1px 4px #3a5bcc30;
+      padding: 2px;
+    }
+    .mini-cell {
+      aspect-ratio: 1;
+      background: #d0e4ff;
+      border: 1.5px solid #6a8cd8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background 0.2s, color 0.2s;
+      color: #555;
+      font-weight: 500;
+      user-select: none;
+    }
+    .mini-cell.active {
+      background: #1976d2;
+      color: #fff;
+      border-color: #1976d2;
+      font-weight: bold;
+      box-shadow: 0 0 6px #1976d270;
+    }
+    .mini-cell.read-only {
+      background: #c8d9ff;
+      color: #bbb;
+      cursor: not-allowed;
+      opacity: 0.7;
+      border-style: dashed;
+      box-shadow: none;
+    }
+    .game-container {
+      background: rgba(240, 248, 255, 0.85);
+      border-radius: 18px;
+      box-shadow: 0 4px 16px rgba(58, 91, 204, 0.11);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 540px;
+      margin: 0 auto;
+      padding: 1.2rem 1rem 1.5rem 1rem;
+      justify-content: center;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+      width: 90vw;
+      max-width: 320px;
+      margin: 0.3rem auto 0 auto;
+      background: #f0f6ff;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px #3a5bcc30;
+      padding: 0.7rem 0.2rem;
+      justify-content: center;
+    }
+    .card {
+      aspect-ratio: 1/1;
+      font-size: 6vw;
+      min-font-size: 1.3rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2.5px solid #1976d2;
+      border-radius: 14px;
+      cursor: pointer;
+      font-weight: bold;
+      background: linear-gradient(135deg, #1976d2 0%, #64b5f6 100%);
+      color: #fff;
+      user-select: none;
+      transition: background 0.18s, color 0.18s;
+      outline: none;
+    }
+    .card.back {
+      background: var(--card-back);
+      color: #1976d2;
+      border-color: #b0bec5;
+      text-shadow: 0 2px 8px #b0bec588;
+    }
+    .card:active {
+      box-shadow: 0 2px 8px #1976d270;
+      filter: brightness(0.96);
+      border-color: #0d47a1;
+    }
+    .circle-container {
+      width: 90vw;
+      max-width: 340px;
+      height: 90vw;
+      max-height: 340px;
+      min-width: 180px;
+      min-height: 180px;
+      margin: 1.2rem auto 0.7rem auto;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .circle-btn {
+      position: absolute;
+      width: 18vw;
+      max-width: 70px;
+      height: 18vw;
+      max-height: 70px;
+      min-width: 28px;
+      min-height: 28px;
+      border-radius: 50%;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #1976d2;
+      background: linear-gradient(135deg, #1976d2 0%, #64b5f6 100%);
+      color: #fff;
+      box-shadow: 0 2px 8px #1976d250;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.18s, color 0.18s;
+    }
+    .circle-btn.back {
+      background: linear-gradient(135deg, #e3e8ee 0%, #b0bec5 100%);
+      color: #1976d2;
+      border-color: #b0bec5;
+    }
+    .circle-btn:active {
+      filter: brightness(0.95);
+      border-color: #0d47a1;
+    }
+    .circle-restart {
+      margin: 1.2rem auto 0 auto;
+      display: block;
+      font-size: 1.13rem;
+      border: none;
+      border-radius: 12px;
+      background: var(--button-bg);
+      color: #1976d2;
+      font-weight: bold;
+      padding: 0.9rem 2.5rem;
+      cursor: pointer;
+      transition: background 0.18s, color 0.18s;
+      box-shadow: 0 2px 8px #1976d218;
+    }
+    .circle-restart:hover, .circle-restart:active {
+      background: var(--button-hover);
+      color: #fff;
+    }
+    .nav-btns {
+      display: flex;
+      justify-content: center;
+      gap: 1.2rem;
+      margin-top: 2.2rem;
+    }
+    .nav-btn {
+      font-size: 1.07rem;
+      border: none;
+      border-radius: 10px;
+      background: var(--button-bg);
+      color: var(--accent);
+      font-weight: bold;
+      letter-spacing: 1px;
+      box-shadow: 0 2px 8px #3a5bcc18;
+      cursor: pointer;
+      padding: 0.8rem 2.2rem;
+      transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+    }
+    .nav-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .nav-btn:hover,
+    .nav-btn:active {
+      background: var(--button-hover);
+      color: #fff;
+      box-shadow: 0 2px 12px #3a5bcc60;
+    }
+    .win-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 999;
+      background: rgba(0, 0, 0, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.5s;
+    }
+    .win-content {
+      background: #e6f0ff;
+      border-radius: 30px;
+      padding: 2.5rem 2rem 2rem 2rem;
+      box-shadow: 0 8px 32px #3a5bcc50;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: popIn 0.6s;
+      position: relative;
+    }
+    @media (max-width: 700px) {
+      .screen { padding: 1.2rem 0.1rem; }
+      .intro-container, .rules, .game-container { max-width: 100vw; padding: 1rem 0.2rem;}
+      .grid { max-width: 94vw; }
+      .circle-container, .circle-rule-board { max-width: 98vw; max-height: 98vw; }
+      .card { font-size: 1.2rem; }
+      .circle-btn, .circle-rule-btn { font-size: 0.9rem; }
+      .intro-wizard { font-size: 3rem; }
+      h1, .intro-title, .game-container .circle-title { font-size: 1.3rem; }
+    }
+    @media (max-width: 480px) {
+      .card { font-size: 1.1rem; }
+      .circle-btn, .circle-rule-btn { font-size: 0.8rem; }
+      .win-content { padding: 1.2rem 0.5rem 1.2rem 0.5rem;}
+      .screen { padding: 0.4rem 0.1rem;}
+    }
   </style>
 </head>
 <body>
@@ -88,11 +482,10 @@
       </div>
     </div>
   </div>
-
   <!-- 규칙 설정 화면 -->
   <div class="screen" id="screen-rule">
     <div class="rules">
-      <h2 style="color:#ff7043">규칙 설정</h2>
+      <h2>규칙 설정</h2>
       <div class="rules-mode-info" id="rulesModeInfo"></div>
       <div id="customGrid" class="rules-editor-grid"></div>
       <div id="circleRuleEditor" style="width:100%;"></div>
@@ -102,7 +495,6 @@
       </div>
     </div>
   </div>
-
   <!-- 게임 화면 (공통) -->
   <div class="screen" id="screen-game">
     <div class="game-container">
@@ -118,7 +510,6 @@
       </div>
     </div>
   </div>
-
   <!-- 승리 모달 -->
   <div id="winModal" class="win-modal" style="display: none">
     <div class="win-content">
@@ -223,7 +614,6 @@
     function rotate180(idx) { return rotate90(rotate90(idx)); }
     function rotate270(idx) { return rotate90(rotate180(idx)); }
 
-    // 규칙설정 화면 렌더링
     function renderRuleEditor() {
       const info = document.getElementById('rulesModeInfo');
       const container = document.getElementById('customGrid');
@@ -242,7 +632,6 @@
         renderCircleRuleDemo();
         return;
       }
-      // 커스텀 모드(클래식/서클) 기존 방식
       container.style.display = (gameType==='classic') ? 'grid' : 'none';
       circleRuleEditor.style.display = (gameType==='circle') ? 'block' : 'none';
       if (gameType === 'classic') {
@@ -295,11 +684,11 @@
     window.demoClassicFlip = function(num) {
       const cells = Array.from({length:9},(_,i)=>document.getElementById(`demo-cell-${i+1}`));
       classicBasicFlipMap[num].forEach(n=>{
-        cells[n-1].classList.add('demo-highlight');
+        cells[n-1].classList.add('active');
       });
       setTimeout(()=>{
         classicBasicFlipMap[num].forEach(n=>{
-          cells[n-1].classList.remove('demo-highlight');
+          cells[n-1].classList.remove('active');
         });
       }, 600);
     };
@@ -330,11 +719,11 @@
     window.demoCircleFlip = function(num) {
       const flipList = circleBasicFlipMap[num];
       flipList.forEach(n=>{
-        document.getElementById(`circle-demo-btn-${n}`).classList.add('demo-highlight');
+        document.getElementById(`circle-demo-btn-${n}`).classList.add('target');
       });
       setTimeout(()=>{
         flipList.forEach(n=>{
-          document.getElementById(`circle-demo-btn-${n}`).classList.remove('demo-highlight');
+          document.getElementById(`circle-demo-btn-${n}`).classList.remove('target');
         });
       }, 600);
     };
@@ -383,14 +772,11 @@
             updateFlipMap();
             renderCircleRuleEditor(true);
           };
-        } else {
-          // 기본 모드: 데모 없음
         }
         board.appendChild(btn);
       }
     }
 
-    // --- 게임 화면 ---
     function renderGame() {
       document.getElementById('game-title').style.display = gameType==='classic'?'block':'none';
       document.getElementById('circle-title').style.display = gameType==='circle'?'block':'none';
