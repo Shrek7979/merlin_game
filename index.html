@@ -5,12 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Merlin Game</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: Arial, sans-serif;
       display: flex;
@@ -19,26 +14,13 @@
       padding: 1rem;
       min-height: 100vh;
     }
-
-    /* 규칙 영역 */
-    .rules {
-      flex: 1;
-      min-width: 300px;
-      max-width: 400px;
-    }
-
-    .rules h2 {
-      margin-bottom: 1rem;
-      font-size: 1.5rem;
-    }
-
+    .rules { flex: 1; min-width: 300px; max-width: 400px; }
+    .rules h2 { margin-bottom: 1rem; font-size: 1.5rem; }
     .rules-editor-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 0.5rem;
     }
-
-    /* 게임 영역 */
     .game-container {
       flex: 1;
       min-width: 300px;
@@ -47,12 +29,7 @@
       flex-direction: column;
       align-items: center;
     }
-
-    h1 {
-      font-size: 2rem;
-      margin-bottom: 1rem;
-    }
-
+    h1 { font-size: 2rem; margin-bottom: 1rem; }
     .grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -60,7 +37,6 @@
       width: 100%;
       max-width: 400px;
     }
-
     .card {
       aspect-ratio: 1;
       font-size: 3rem !important;
@@ -73,27 +49,19 @@
       background: #ddd;
       font-weight: bold;
     }
-
-    .card.back {
-      background: #666;
-      color: white;
-    }
-
+    .card.back { background: #666; color: white; }
     button {
       margin-top: 1.5rem;
       padding: 1rem 2rem;
       font-size: 1.2rem;
       border-radius: 8px;
     }
-
-    /* 미니 그리드 스타일 */
     .mini-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 2px;
       margin-top: 0.5rem;
     }
-
     .mini-cell {
       aspect-ratio: 1;
       background: #eee;
@@ -103,52 +71,18 @@
       font-size: 0.8rem;
       cursor: pointer;
     }
-
-    .mini-cell.active {
-      background: #222;
-      color: white;
-    }
-
-    /* 모바일 대응 */
+    .mini-cell.active { background: #222; color: white; }
     @media (max-width: 768px) {
-      body {
-        flex-direction: column;
-        padding: 0.5rem;
-        gap: 0.5rem;
-      }
-
-      .rules, .game-container {
-        width: 100%;
-        max-width: 100%;
-      }
-
-      .grid {
-        max-width: 100%;
-        gap: 0.3rem;
-      }
-
-      .card {
-        font-size: 2.5rem !important;
-      }
-
-      button {
-        padding: 0.8rem 1.5rem;
-        font-size: 1rem;
-      }
-
-      .mini-cell {
-        font-size: 0.7rem;
-      }
+      body { flex-direction: column; padding: 0.5rem; gap: 0.5rem; }
+      .rules, .game-container { width: 100%; max-width: 100%; }
+      .grid { max-width: 100%; gap: 0.3rem; }
+      .card { font-size: 2.5rem !important; }
+      button { padding: 0.8rem 1.5rem; font-size: 1rem; }
+      .mini-cell { font-size: 0.7rem; }
     }
-
     @media (max-width: 480px) and (orientation: portrait) {
-      .card {
-        font-size: 2rem !important;
-      }
-
-      h1 {
-        font-size: 1.5rem;
-      }
+      .card { font-size: 2rem !important; }
+      h1 { font-size: 1.5rem; }
     }
   </style>
 </head>
@@ -157,16 +91,78 @@
     <h2>📜 규칙 설정</h2>
     <div id="customGrid" class="rules-editor-grid"></div>
   </div>
-
   <div class="game-container">
     <h1>🧙 매직 카드 게임</h1>
     <div class="grid" id="grid"></div>
     <button onclick="resetGame()">🔄 새로 시작</button>
   </div>
-
   <script>
+    // 대칭 인덱스 매핑 (1-based)
+    // 1 2 3
+    // 4 5 6
+    // 7 8 9
+    // B1 <-> B3 <-> B7 <-> B9 (대각 대칭)
+    // B2 <-> B4 <-> B6 <-> B8 (변 중앙 대칭)
+    // B5 (중앙)
+    const symmetryMap = {
+      1: 1, 2: 2, 3: 3,
+      4: 4, 5: 5, 6: 6,
+      7: 7, 8: 8, 9: 9
+    };
+    // 각 버튼의 대칭 그룹
+    const cornerGroup = [1, 3, 7, 9];
+    const edgeGroup = [2, 4, 6, 8];
+    const centerGroup = [5];
+
+    // 규칙 에디터에서 사용할 대표 규칙(B1, B2, B5)
+    let baseRules = {
+      1: [1], // B1 (좌상단)
+      2: [2], // B2 (상중앙)
+      5: [5], // B5 (중앙)
+    };
+
+    // 실제 게임에서 사용할 9개 버튼의 규칙
     let flipMap = {};
-    for (let i = 1; i <= 9; i++) flipMap[i] = [i];
+
+    // baseRules를 바탕으로 flipMap 전체 생성
+    function updateFlipMap() {
+      // corners
+      cornerGroup.forEach((btn, idx) => {
+        // 대칭 순서: 1-3-9-7 (시계방향)
+        // baseRules[1]의 각 셀도 시계방향으로 대칭
+        flipMap[btn] = baseRules[1].map(cell => {
+          // cell의 대칭 위치 찾기
+          const cornerCells = [1, 3, 9, 7];
+          const i = cornerCells.indexOf(cell);
+          if (i !== -1) return cornerCells[(i + idx) % 4];
+          // edgeCells 대칭
+          const edgeCells = [2, 6, 8, 4];
+          const j = edgeCells.indexOf(cell);
+          if (j !== -1) return edgeCells[(j + idx) % 4];
+          // center
+          if (cell === 5) return 5;
+          return cell;
+        });
+      });
+      // edges
+      edgeGroup.forEach((btn, idx) => {
+        // 대칭 순서: 2-6-8-4 (시계방향)
+        flipMap[btn] = baseRules[2].map(cell => {
+          const edgeCells = [2, 6, 8, 4];
+          const i = edgeCells.indexOf(cell);
+          if (i !== -1) return edgeCells[(i + idx) % 4];
+          const cornerCells = [1, 3, 9, 7];
+          const j = cornerCells.indexOf(cell);
+          if (j !== -1) return cornerCells[(j + idx) % 4];
+          if (cell === 5) return 5;
+          return cell;
+        });
+      });
+      // center
+      flipMap[5] = baseRules[5].slice();
+    }
+
+    // 카드 상태
     let cardStates = Array(9).fill().map(() => Math.random() < 0.5);
 
     function renderGrid() {
@@ -194,14 +190,16 @@
 
     function renderRuleEditor() {
       const container = document.getElementById("customGrid");
-      container.innerHTML = Array(9).fill().map((_, i) => `
+      // B1, B2, B5만 표시
+      const ruleNames = {1: "B1 (네 모서리)", 2: "B2 (네 변 중앙)", 5: "B5 (중앙)"};
+      container.innerHTML = [1, 2, 5].map((btn) => `
         <div>
-          <div style="margin: 0.5rem 0; font-weight: bold">B${i + 1}</div>
+          <div style="margin: 0.5rem 0; font-weight: bold">${ruleNames[btn]}</div>
           <div class="mini-grid">
             ${Array(9).fill().map((_, j) => `
-              <div class="mini-cell ${flipMap[i+1].includes(j+1) ? 'active' : ''}"
-                   onclick="toggleRule(${i+1}, ${j+1})">
-                ${flipMap[i+1].includes(j+1) ? '●' : '○'}
+              <div class="mini-cell ${baseRules[btn].includes(j+1) ? 'active' : ''}"
+                   onclick="toggleRule(${btn}, ${j+1})">
+                ${baseRules[btn].includes(j+1) ? '●' : '○'}
               </div>
             `).join('')}
           </div>
@@ -209,15 +207,19 @@
       `).join('');
     }
 
-    function toggleRule(ruleNum, targetNum) {
-      const index = flipMap[ruleNum].indexOf(targetNum);
-      if (index > -1) flipMap[ruleNum].splice(index, 1);
-      else flipMap[ruleNum].push(targetNum);
+    // 대표 규칙 토글
+    window.toggleRule = function(ruleNum, targetNum) {
+      const arr = baseRules[ruleNum];
+      const idx = arr.indexOf(targetNum);
+      if (idx > -1) arr.splice(idx, 1);
+      else arr.push(targetNum);
+      updateFlipMap();
       renderRuleEditor();
-    }
+    };
 
     // 초기화
     document.addEventListener('DOMContentLoaded', () => {
+      updateFlipMap();
       renderGrid();
       renderRuleEditor();
     });
