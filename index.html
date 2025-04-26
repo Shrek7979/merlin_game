@@ -5,21 +5,95 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Merlin Game</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --main-bg: linear-gradient(135deg, #f8ffae 0%, #43cea2 100%);
+      --card-front: linear-gradient(145deg, #f6d365 0%, #fda085 100%);
+      --card-back: linear-gradient(145deg, #667eea 0%, #764ba2 100%);
+      --card-shadow: 0 4px 16px rgba(100,100,100,0.15);
+      --accent: #43cea2;
+      --mini-active: #43cea2;
+      --mini-inactive: #f8ffae;
+      --mini-border: #b2b2b2;
+      --button-bg: linear-gradient(90deg, #ffecd2 0%, #fcb69f 100%);
+      --button-hover: linear-gradient(90deg, #fcb69f 0%, #ffecd2 100%);
+      --button-shadow: 0 2px 8px rgba(255, 140, 100, 0.15);
+    }
+    html, body {
+      height: 100%;
+    }
     body {
-      font-family: Arial, sans-serif;
+      min-height: 100vh;
+      background: var(--main-bg);
+      font-family: 'Segoe UI', 'Apple SD Gothic Neo', Arial, sans-serif;
       display: flex;
       flex-wrap: wrap;
-      gap: 1rem;
-      padding: 1rem;
-      min-height: 100vh;
+      gap: 1.5rem;
+      padding: 1.5rem;
+      box-sizing: border-box;
     }
-    .rules { flex: 1; min-width: 300px; max-width: 400px; }
-    .rules h2 { margin-bottom: 1rem; font-size: 1.5rem; }
+    .rules {
+      flex: 1;
+      min-width: 300px;
+      max-width: 400px;
+      background: rgba(255,255,255,0.6);
+      border-radius: 18px;
+      box-shadow: 0 4px 16px rgba(67,206,162,0.06);
+      padding: 1.2rem 1rem 1.5rem 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .rules h2 {
+      margin-bottom: 1.2rem;
+      font-size: 1.5rem;
+      color: #333;
+      letter-spacing: 1px;
+    }
     .rules-editor-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 0.5rem;
+      gap: 1.2rem;
+      width: 100%;
+      justify-items: center;
+    }
+    .rule-label {
+      margin: 0.5rem 0 0.2rem 0;
+      font-weight: bold;
+      color: #333;
+      text-align: center;
+      font-size: 1.08rem;
+      letter-spacing: 0.5px;
+    }
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      margin-top: 0.1rem;
+      background: #f8ffae;
+      border-radius: 7px;
+      box-shadow: 0 1px 4px #43cea230;
+      padding: 2px;
+    }
+    .mini-cell {
+      aspect-ratio: 1;
+      background: var(--mini-inactive);
+      border: 1.5px solid var(--mini-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background 0.2s, color 0.2s;
+      color: #888;
+      font-weight: 500;
+    }
+    .mini-cell.active {
+      background: var(--mini-active);
+      color: #fff;
+      border-color: #43cea2;
+      font-weight: bold;
+      box-shadow: 0 0 6px #43cea270;
     }
     .game-container {
       flex: 1;
@@ -28,61 +102,81 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      background: rgba(255,255,255,0.55);
+      border-radius: 18px;
+      box-shadow: 0 4px 16px rgba(250, 168, 133, 0.08);
+      padding: 1.2rem 1rem 1.5rem 1rem;
     }
-    h1 { font-size: 2rem; margin-bottom: 1rem; }
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 1.2rem;
+      color: #333;
+      letter-spacing: 1px;
+      text-shadow: 0 2px 8px #fcb69f30;
+    }
     .grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 0.5rem;
+      gap: 0.7rem;
       width: 100%;
       max-width: 400px;
+      margin-top: 0.3rem;
     }
     .card {
       aspect-ratio: 1;
-      font-size: 3rem !important;
+      font-size: 3.2rem !important;
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 3px solid #444;
-      border-radius: 10px;
+      border: none;
+      border-radius: 16px;
       cursor: pointer;
-      background: #ddd;
       font-weight: bold;
+      background: var(--card-front);
+      box-shadow: var(--card-shadow);
+      color: #fff;
+      user-select: none;
+      transition: background 0.18s, color 0.18s, box-shadow 0.18s;
     }
-    .card.back { background: #666; color: white; }
+    .card.back {
+      background: var(--card-back);
+      color: #f8ffae;
+      text-shadow: 0 2px 8px #764ba2af;
+    }
+    .card:active {
+      box-shadow: 0 2px 8px #43cea270;
+      filter: brightness(0.95);
+    }
     button {
       margin-top: 1.5rem;
-      padding: 1rem 2rem;
+      padding: 1rem 2.2rem;
       font-size: 1.2rem;
-      border-radius: 8px;
-    }
-    .mini-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 2px;
-      margin-top: 0.5rem;
-    }
-    .mini-cell {
-      aspect-ratio: 1;
-      background: #eee;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.8rem;
+      border-radius: 10px;
+      border: none;
+      background: var(--button-bg);
+      color: #333;
+      font-weight: bold;
+      letter-spacing: 1px;
+      box-shadow: var(--button-shadow);
       cursor: pointer;
+      transition: background 0.18s, color 0.18s, box-shadow 0.18s;
     }
-    .mini-cell.active { background: #222; color: white; }
+    button:hover, button:active {
+      background: var(--button-hover);
+      color: #222;
+      box-shadow: 0 2px 12px #fcb69f60;
+    }
     @media (max-width: 768px) {
-      body { flex-direction: column; padding: 0.5rem; gap: 0.5rem; }
+      body { flex-direction: column; padding: 0.5rem; gap: 0.7rem; }
       .rules, .game-container { width: 100%; max-width: 100%; }
-      .grid { max-width: 100%; gap: 0.3rem; }
-      .card { font-size: 2.5rem !important; }
+      .grid { max-width: 100%; gap: 0.5rem; }
+      .card { font-size: 2.3rem !important; }
       button { padding: 0.8rem 1.5rem; font-size: 1rem; }
-      .mini-cell { font-size: 0.7rem; }
+      .mini-cell { font-size: 0.85rem; }
     }
     @media (max-width: 480px) and (orientation: portrait) {
-      .card { font-size: 2rem !important; }
-      h1 { font-size: 1.5rem; }
+      .card { font-size: 1.5rem !important; }
+      h1 { font-size: 1.2rem; }
     }
   </style>
 </head>
@@ -97,27 +191,24 @@
     <button onclick="resetGame()">🔄 새로 시작</button>
   </div>
   <script>
-    // 대칭 인덱스 매핑 (1-based)
-    // 1 2 3
-    // 4 5 6
-    // 7 8 9
-    // B1 <-> B3 <-> B7 <-> B9 (대각 대칭)
-    // B2 <-> B4 <-> B6 <-> B8 (변 중앙 대칭)
-    // B5 (중앙)
-    const symmetryMap = {
-      1: 1, 2: 2, 3: 3,
-      4: 4, 5: 5, 6: 6,
-      7: 7, 8: 8, 9: 9
-    };
-    // 각 버튼의 대칭 그룹
-    const cornerGroup = [1, 3, 7, 9];
-    const edgeGroup = [2, 4, 6, 8];
-    const centerGroup = [5];
+    // 3x3 격자 좌표 변환 (1~9 <-> [row, col])
+    function idxToRC(idx) { return [Math.floor((idx-1)/3), (idx-1)%3]; }
+    function rcToIdx(r, c) { return r*3 + c + 1; }
+
+    // 90도 회전
+    function rotate90(idx) {
+      const [r, c] = idxToRC(idx);
+      return rcToIdx(c, 2 - r);
+    }
+    // 180도 회전
+    function rotate180(idx) { return rotate90(rotate90(idx)); }
+    // 270도 회전
+    function rotate270(idx) { return rotate90(rotate180(idx)); }
 
     // 규칙 에디터에서 사용할 대표 규칙(B1, B2, B5)
     let baseRules = {
-      1: [1], // B1 (좌상단)
-      2: [2], // B2 (상중앙)
+      1: [1], // B1 (좌상단, 모서리 그룹)
+      2: [2], // B2 (상중앙, 변중앙 그룹)
       5: [5], // B5 (중앙)
     };
 
@@ -126,39 +217,17 @@
 
     // baseRules를 바탕으로 flipMap 전체 생성
     function updateFlipMap() {
-      // corners
-      cornerGroup.forEach((btn, idx) => {
-        // 대칭 순서: 1-3-9-7 (시계방향)
-        // baseRules[1]의 각 셀도 시계방향으로 대칭
-        flipMap[btn] = baseRules[1].map(cell => {
-          // cell의 대칭 위치 찾기
-          const cornerCells = [1, 3, 9, 7];
-          const i = cornerCells.indexOf(cell);
-          if (i !== -1) return cornerCells[(i + idx) % 4];
-          // edgeCells 대칭
-          const edgeCells = [2, 6, 8, 4];
-          const j = edgeCells.indexOf(cell);
-          if (j !== -1) return edgeCells[(j + idx) % 4];
-          // center
-          if (cell === 5) return 5;
-          return cell;
-        });
-      });
-      // edges
-      edgeGroup.forEach((btn, idx) => {
-        // 대칭 순서: 2-6-8-4 (시계방향)
-        flipMap[btn] = baseRules[2].map(cell => {
-          const edgeCells = [2, 6, 8, 4];
-          const i = edgeCells.indexOf(cell);
-          if (i !== -1) return edgeCells[(i + idx) % 4];
-          const cornerCells = [1, 3, 9, 7];
-          const j = cornerCells.indexOf(cell);
-          if (j !== -1) return cornerCells[(j + idx) % 4];
-          if (cell === 5) return 5;
-          return cell;
-        });
-      });
-      // center
+      // B1, B3, B7, B9 (모서리)
+      flipMap[1] = baseRules[1].slice();
+      flipMap[3] = baseRules[1].map(rotate90);
+      flipMap[9] = baseRules[1].map(rotate180);
+      flipMap[7] = baseRules[1].map(rotate270);
+      // B2, B4, B6, B8 (변 중앙)
+      flipMap[2] = baseRules[2].slice();
+      flipMap[6] = baseRules[2].map(rotate90);
+      flipMap[8] = baseRules[2].map(rotate180);
+      flipMap[4] = baseRules[2].map(rotate270);
+      // B5 (중앙)
       flipMap[5] = baseRules[5].slice();
     }
 
@@ -180,7 +249,7 @@
     function handleClick(num) {
       flipMap[num].forEach(n => cardStates[n - 1] = !cardStates[n - 1]);
       renderGrid();
-      if (cardStates.every(s => s)) setTimeout(() => alert('🎉 성공! 모든 카드를 뒤집었습니다!'), 50);
+      if (cardStates.every(s => s)) setTimeout(() => alert('🎉 성공! 모든 카드를 뒤집었습니다!'), 80);
     }
 
     function resetGame() {
@@ -191,10 +260,14 @@
     function renderRuleEditor() {
       const container = document.getElementById("customGrid");
       // B1, B2, B5만 표시
-      const ruleNames = {1: "B1 (네 모서리)", 2: "B2 (네 변 중앙)", 5: "B5 (중앙)"};
+      const ruleNames = {
+        1: "B1<br><small>(네 모서리)</small>",
+        2: "B2<br><small>(네 변 중앙)</small>",
+        5: "B5<br><small>(중앙)</small>"
+      };
       container.innerHTML = [1, 2, 5].map((btn) => `
         <div>
-          <div style="margin: 0.5rem 0; font-weight: bold">${ruleNames[btn]}</div>
+          <div class="rule-label">${ruleNames[btn]}</div>
           <div class="mini-grid">
             ${Array(9).fill().map((_, j) => `
               <div class="mini-cell ${baseRules[btn].includes(j+1) ? 'active' : ''}"
