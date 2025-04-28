@@ -13,23 +13,29 @@
       --button-bg: linear-gradient(90deg, #a0c4ff 0%, #64b5f6 100%);
       --button-hover: linear-gradient(90deg, #64b5f6 0%, #a0c4ff 100%);
     }
-    html, body { height: 100%; }
+    html, body { 
+      height: 100%; 
+      overflow-x: hidden;
+    }
     body {
       min-height: 100vh;
       background: var(--main-bg);
       font-family: 'Segoe UI', 'Apple SD Gothic Neo', Arial, sans-serif;
       margin: 0;
       padding: 0;
+      display: flex;
+      flex-direction: column;
     }
     .screen {
       display: none;
-      min-height: 80vh;
+      height: 100vh;
       width: 100vw;
       max-width: 600px;
       margin: 0 auto;
       padding: 2.5rem 1rem 2rem 1rem;
       box-sizing: border-box;
       animation: fadeIn 0.5s;
+      overflow: hidden;
     }
     .screen.active { display: block; }
     @keyframes fadeIn {
@@ -562,23 +568,38 @@
       color: #fff;
     }
     @media (max-width: 700px) {
-      .screen { padding: 1.2rem 0.2rem 1.5rem 0.2rem; }
-      .rules, .game-container, .intro-container { max-width: 100vw; padding: 1rem 0.3rem; }
+      .screen { 
+        padding: 0.8rem 0.2rem 0.5rem 0.2rem; 
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      .rules, .game-container, .intro-container { 
+        max-width: 100vw; 
+        padding: 0.7rem 0.3rem;
+        margin: auto; 
+      }
+      .click-counter {
+        margin: 0.5rem 0;
+      }
       .grid { gap: 0.35rem; }
       .card { font-size: 1.7rem !important; }
-      h1, .intro-title, .game-container .circle-title { font-size: 1.5rem; }
-      .intro-wizard { font-size: 5rem; margin-bottom: 1rem; }
+      h1, .intro-title, .game-container .circle-title { 
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem; 
+      }
+      .intro-wizard { font-size: 5rem; margin-bottom: 0.5rem; }
       .circle-container { 
-        width: 280px; 
-        height: 280px; 
-        transform: scale(0.9);
+        width: 260px; 
+        height: 260px; 
+        transform: scale(0.85);
         margin: 0 auto;
       }
       .circle-btn { 
         width: 60px; 
         height: 60px; 
         font-size: 1.5rem;
-        transform-origin: 140px 140px;
+        transform-origin: 130px 130px;
       }
       .circle-rule-board { width: 180px; height: 180px; }
       .circle-rule-btn { width: 32px; height: 32px; font-size: 0.9rem;}
@@ -595,20 +616,45 @@
         height: 20px;
         font-size: 0.75rem;
       }
+      .nav-btns {
+        margin-top: 1rem;
+      }
+      .circle-restart, #classic-restart {
+        margin-top: 0.7rem;
+        padding: 0.6rem 2rem;
+      }
+      .intro-desc {
+        margin-bottom: 1rem;
+        font-size: 1rem;
+      }
     }
     @media (max-width: 420px) {
       .win-content { padding: 1.2rem 0.5rem 1.2rem 0.5rem;}
-      .screen { padding: 0.4rem 0.1rem;}
+      .screen { 
+        padding: 0.2rem 0.1rem;
+        height: 100vh;
+      }
       .circle-container { 
-        width: 240px; 
-        height: 240px;
-        transform: scale(0.85);
+        width: 220px; 
+        height: 220px;
+        transform: scale(0.8);
       }
       .circle-btn { 
-        width: 50px; 
-        height: 50px; 
-        font-size: 1.3rem;
-        transform-origin: 120px 120px;
+        width: 48px; 
+        height: 48px; 
+        font-size: 1.2rem;
+        transform-origin: 110px 110px;
+      }
+      .nav-btns {
+        gap: 0.8rem;
+      }
+      .nav-btn {
+        padding: 0.6rem 1.5rem;
+        font-size: 1rem;
+      }
+      .game-container .circle-title {
+        font-size: 1.4rem;
+        margin-bottom: 0.3rem;
       }
     }
   </style>
@@ -665,7 +711,7 @@
       <div class="grid" id="grid"></div>
       <div class="circle-container" id="circleGrid" style="display:none"></div>
       <button id="circle-restart" class="circle-restart" style="display:none" onclick="resetGame()">🔄 새로 시작</button>
-      <button id="classic-restart" style="display:none;margin:1.2rem auto 0 auto;display:block;font-size:1.13rem;border:none;border-radius:12px;background:var(--button-bg);color:var(--accent);font-weight:bold;padding:0.9rem 2.5rem;cursor:pointer;transition:background 0.18s,color 0.18s;box-shadow:0 2px 8px #3a5bcc18;">🔄 새로 시작</button>
+      <button id="classic-restart" style="display:none;margin:0.7rem auto 0 auto;display:block;font-size:1.13rem;border:none;border-radius:12px;background:var(--button-bg);color:var(--accent);font-weight:bold;padding:0.9rem 2.5rem;cursor:pointer;transition:background 0.18s,color 0.18s;box-shadow:0 2px 8px #3a5bcc18;">🔄 새로 시작</button>
       <div class="nav-btns">
         <button class="nav-btn" onclick="goToScreen(1)">&lt; 이전</button>
         <button class="nav-btn" disabled>다음 &gt;</button>
