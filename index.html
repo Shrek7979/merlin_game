@@ -154,6 +154,13 @@
       width: 100%;
       justify-items: center;
     }
+    .rules-editor-grid.circle-rules {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.8rem 0.2rem;
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 0.5rem 0;
+    }
     .rules-editor-grid.circle { display: none; }
     .circle-rule-editor {
       display: flex;
@@ -227,6 +234,65 @@
       box-shadow: 0 1px 4px #3a5bcc30;
       padding: 2px;
     }
+    .circle-mini-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      width: 100%;
+      gap: 1px;
+      max-width: 170px;
+    }
+    .circle-mini-grid .mini-cell {
+      font-size: 0.9rem;
+      border-width: 1px;
+    }
+    .circle-mini-display {
+      position: relative;
+      width: 136px;
+      height: 136px;
+      margin: 0 auto;
+      background: #e8f0ff;
+      border-radius: 50%;
+      box-shadow: 0 1px 6px rgba(25, 118, 210, 0.15);
+    }
+    .circle-mini-display.editable {
+      background: rgba(25, 118, 210, 0.08);
+      box-shadow: 0 2px 10px rgba(25, 118, 210, 0.25);
+      border: 2px dashed rgba(25, 118, 210, 0.3);
+    }
+    .circle-mini-display::before {
+      content: '';
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background: #d0e4ff;
+      border: 1px solid #6a8cd8;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .circle-mini-cell {
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: bold;
+      background: #d0e4ff;
+      border: 1.5px solid #6a8cd8;
+      color: #000;
+      box-shadow: 0 1px 3px rgba(25, 118, 210, 0.2);
+      transition: all 0.2s ease;
+    }
+    .circle-mini-cell.active {
+      background: #1976d2;
+      color: #fff;
+      border-color: #1976d2;
+      box-shadow: 0 2px 5px rgba(25, 118, 210, 0.3);
+    }
     .mini-cell {
       aspect-ratio: 1;
       background: #d0e4ff;
@@ -238,8 +304,8 @@
       cursor: pointer;
       border-radius: 5px;
       transition: background 0.2s, color 0.2s;
-      color: #555;
-      font-weight: 500;
+      color: #000;
+      font-weight: 900;
       user-select: none;
     }
     .mini-cell.active {
@@ -251,9 +317,9 @@
     }
     .mini-cell.read-only {
       background: #c8d9ff;
-      color: #bbb;
+      color: #000;
       cursor: not-allowed;
-      opacity: 0.7;
+      opacity: 0.9;
       border-style: dashed;
       box-shadow: none;
     }
@@ -269,6 +335,17 @@
       margin: 0 auto;
       padding: 1.2rem 1rem 1.5rem 1rem;
       justify-content: center;
+    }
+    .click-counter {
+      background: rgba(25, 118, 210, 0.1);
+      color: #1976d2;
+      font-weight: bold;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      margin: 1rem 0;
+      text-align: center;
+      font-size: 1.1rem;
+      box-shadow: 0 2px 5px rgba(25, 118, 210, 0.1);
     }
     h1 {
       font-size: 2.2rem;
@@ -495,6 +572,19 @@
       .circle-btn { width: 50px; height: 50px; font-size: 1.1rem;}
       .circle-rule-board { width: 180px; height: 180px; }
       .circle-rule-btn { width: 32px; height: 32px; font-size: 0.9rem;}
+      .rules-editor-grid.circle-rules {
+        grid-template-columns: repeat(2, 1fr);
+        max-width: 340px;
+      }
+      .circle-mini-display {
+        width: 120px;
+        height: 120px;
+      }
+      .circle-mini-cell {
+        width: 20px;
+        height: 20px;
+        font-size: 0.75rem;
+      }
     }
     @media (max-width: 420px) {
       .win-content { padding: 1.2rem 0.5rem 1.2rem 0.5rem;}
@@ -509,8 +599,8 @@
       <div class="intro-title">Merlin Game</div>
       <div class="intro-wizard">🧙‍♂️</div>
       <div class="game-type-container">
-        <button class="game-type-btn selected" id="btn-classic" onclick="selectGameType('classic')">클래식 Merlin Game</button>
-        <button class="game-type-btn" id="btn-circle" onclick="selectGameType('circle')">New Merlin Game</button>
+        <button class="game-type-btn selected" id="btn-classic" onclick="selectGameType('classic')">Classic Merlin Game</button>
+        <button class="game-type-btn" id="btn-circle" onclick="selectGameType('circle')">Circle Merlin Game</button>
       </div>
       <div class="intro-desc" id="intro-desc">
         멀린게임은 3×3 격자의 9개의 버튼을 각각 눌렀을 때,
@@ -549,7 +639,8 @@
   <div class="screen" id="screen-game">
     <div class="game-container">
       <h1 id="game-title" style="display:none">Merlin Game</h1>
-      <div class="circle-title" id="circle-title" style="display:none">New Merlin Game</div>
+      <div class="circle-title" id="circle-title" style="display:none">Circle Merlin Game</div>
+      <div class="click-counter">클릭 횟수: 0</div>
       <div class="grid" id="grid"></div>
       <div class="circle-container" id="circleGrid" style="display:none"></div>
       <button id="circle-restart" class="circle-restart" style="display:none" onclick="resetGame()">🔄 새로 시작</button>
@@ -566,12 +657,7 @@
     <div class="win-content">
       <div class="win-emoji">✨🧙‍♂️✨</div>
       <div class="win-title">마법 성공!</div>
-      <div class="win-msg">
-        모든 카드를 앞면으로 뒤집었습니다!<br />
-        <span style="font-size: 1.2em">🎩 "Merlin"도 감탄하는 실력!</span
-        ><br />
-        <span style="color: #6ea8fe">다시 도전해볼까요?</span>
-      </div>
+      <div class="win-msg"></div>
       <button class="win-close" onclick="closeWinModal()">처음으로</button>
     </div>
   </div>
@@ -579,6 +665,8 @@
     // 상태
     let gameType = 'classic'; // classic or circle
     let ruleMode = 'basic';   // basic or custom
+    let cardStates = [];
+    let clickCount = 0; // 버튼 클릭 횟수 기록
 
     // --- CLASSIC (3x3) ---
     const classicBasicFlipMap = {
@@ -594,12 +682,10 @@
       1: [7,1,2], 2: [1,2,3], 3: [2,3,4], 4: [3,4,5],
       5: [4,5,6], 6: [5,6,7], 7: [6,7,1]
     };
-    let circleBaseRules = { 1: [1,2,7], 2: [1,2,3], 4: [3,4,5] }; // 기본값
+    // 1번 버튼의 초기 규칙 (자기 자신과 양옆)
+    let circleBaseRules = { 1: [7,1,2] }; 
     let circleFlipMap = {};
     let circleEditBtn = 1; // 커스텀 모드에서 편집중인 버튼
-
-    // 게임 상태
-    let cardStates = [];
 
     // --- UI 선택 함수 ---
     function selectGameType(type) {
@@ -617,15 +703,15 @@
     function updateIntroDesc() {
       const desc = document.getElementById('intro-desc');
       if (gameType === 'classic') {
-        desc.innerHTML = `멀린게임은 3×3 격자의 9개의 버튼을 각각 눌렀을 때,<br />
-        <b>정해진 규칙</b>에 따라 반전되는 게임입니다.<br /><br />
-        각각의 버튼에 규칙을 부여하고 실제로 게임을 진행해 보세요.<br /><br />
+        desc.innerHTML = `멀린게임은 3×3 격자의 9개의 버튼을 각각 눌렀을 때,
+        <b>정해진 규칙</b>에 따라 반전되는 게임입니다.<br />
+        각각의 버튼에 규칙을 부여하고 실제로 게임을 진행해 보세요.<br />
         <span style="color: var(--accent); font-weight: bold"
           >1부터 9의 숫자가 모두 보이면 승리합니다. ^^</span>`;
       } else {
         desc.innerHTML = `New Merlin Game은 7개의 원이 원형으로 배치되어 있고,
-        각 버튼을 누르면 <b>자기 자신과 양 옆</b>이 반전됩니다.<br /><br />
-        규칙을 커스텀하려면 원형 배열에서 직접 반전 대상을 선택하세요.<br /><br />
+        각 버튼을 누르면 <b>자기 자신과 양 옆</b>이 반전됩니다.
+        규칙을 커스텀하려면 원형 배열에서 직접 반전 대상을 선택하세요.<br />
         <span style="color: var(--accent); font-weight: bold"
           >1부터 7의 숫자가 모두 보이면 승리합니다. ^^</span>`;
       }
@@ -651,14 +737,14 @@
         if (ruleMode === 'basic') {
           for (let i = 1; i <= 7; i++) circleFlipMap[i] = circleBasicFlipMap[i].slice();
         } else {
-          // 원형 커스텀(1,2,4만 직접 지정, 나머지는 시계방향 대칭)
+          // 원형 커스텀(1번만 직접 지정, 나머지는 대칭으로 자동 결정)
           circleFlipMap[1] = (circleBaseRules[1]||[]).slice();
-          circleFlipMap[2] = (circleBaseRules[2]||[]).slice();
-          circleFlipMap[3] = (circleBaseRules[2]||[]).map(n => (n%7)+1);
-          circleFlipMap[4] = (circleBaseRules[4]||[]).slice();
-          circleFlipMap[5] = (circleBaseRules[4]||[]).map(n => (n%7)+1);
-          circleFlipMap[6] = (circleBaseRules[4]||[]).map(n => ((n+1)%7)+1);
-          circleFlipMap[7] = (circleBaseRules[2]||[]).map(n => ((n+4-1)%7)+1);
+          
+          // 시계 방향으로 적절하게 순환하며 규칙 적용
+          // B1의 패턴이 [7,1,2]이면 B2는 [1,2,3], B3는 [2,3,4], ...
+          for (let i = 2; i <= 7; i++) {
+            circleFlipMap[i] = circleFlipMap[1].map(n => ((n - 1 + (i - 1)) % 7) + 1);
+          }
         }
       }
     }
@@ -716,13 +802,93 @@
         circleRuleEditor.innerHTML = '';
       } else {
         if (ruleMode === 'basic') {
-          info.innerHTML = '🟦 <b>기본 모드</b>: 각 버튼을 누르면 자기 자신과 양 옆 버튼이 반전됩니다.<br>아래 원형판에서 각 버튼을 눌렀을 때 어떤 카드가 반전되는지 확인하세요.';
-          renderCircleRuleEditor(false);
+          info.innerHTML = '🟦 <b>기본 모드</b>: 각 버튼(B1~B7)은 해당 번호의 버튼을 눌렀을 때 반전되는 버튼들을 나타냅니다. 기본적으로 각 버튼을 누르면 자기 자신과 양 옆 버튼이 반전됩니다.';
+          // 원형 그리드 형태로 표시
+          container.style.display = 'grid';
+          container.className = 'rules-editor-grid circle-rules';
+          const ruleNames = {1:'B1',2:'B2',3:'B3',4:'B4',5:'B5',6:'B6',7:'B7'};
+          container.innerHTML = Array.from({length:7},(_,i)=>i+1).map(btn=>`
+            <div>
+              <div class="rule-label">${ruleNames[btn]}</div>
+              <div class="circle-mini-display" id="circle-display-${btn}"></div>
+            </div>
+          `).join('');
+          
+          // 각 버튼별로 원형으로 규칙 표시
+          for (let btn = 1; btn <= 7; btn++) {
+            const display = document.getElementById(`circle-display-${btn}`);
+            const displayWidth = display.offsetWidth;
+            const center = displayWidth / 2;
+            const N = 7, R = center * 0.7;
+            const cellSize = displayWidth < 130 ? 20 : 22;
+            const offset = cellSize / 2;
+            
+            for (let i = 0; i < N; i++) {
+              const angle = (i/N) * 2 * Math.PI - Math.PI/2;
+              const x = center + R * Math.cos(angle) - offset;
+              const y = center + R * Math.sin(angle) - offset;
+              
+              const cell = document.createElement('div');
+              cell.className = `circle-mini-cell ${circleBasicFlipMap[btn].includes(i+1) ? 'active' : ''}`;
+              cell.textContent = i + 1;
+              cell.style.left = x + 'px';
+              cell.style.top = y + 'px';
+              display.appendChild(cell);
+            }
+          }
+          
+          circleRuleEditor.style.display = 'none';
         } else {
-          info.innerHTML = '🟦 <b>커스텀 모드</b>: 아래 원형 배열에서 각 버튼을 클릭해 반전 대상을 직접 선택하세요.<br>나머지 버튼은 시계방향 대칭으로 자동 결정됩니다.<br><span style="color:#1976d2">편집할 버튼을 먼저 선택한 뒤, 반전 대상을 클릭하세요.</span>';
-          renderCircleRuleEditor(true);
+          info.innerHTML = '🟦 <b>커스텀 모드</b>: B1은 1번 버튼을 눌렀을 때의 규칙입니다. B1 규칙만 직접 설정할 수 있고, 나머지는 대칭으로 자동 결정됩니다.<br><span style="color:#1976d2;font-style:italic">B1 원 안의 숫자를 클릭하여 1번 버튼을 눌렀을 때 반전될 버튼들을 선택하세요.</span>';
+          
+          // 원형 그리드 형태로 표시
+          container.style.display = 'grid';
+          container.className = 'rules-editor-grid circle-rules';
+          const ruleNames = {1:'B1',2:'B2',3:'B3',4:'B4',5:'B5',6:'B6',7:'B7'};
+          
+          // 1번 버튼(편집 가능)과 나머지 버튼(읽기 전용) 표시
+          container.innerHTML = Array.from({length:7},(_,i)=>i+1).map(btn=>`
+            <div>
+              <div class="rule-label">${ruleNames[btn]}</div>
+              <div class="circle-mini-display ${btn === 1 ? 'editable' : ''}" id="circle-display-${btn}"></div>
+            </div>
+          `).join('');
+          
+          // 각 버튼별로 원형으로 규칙 표시
+          for (let btn = 1; btn <= 7; btn++) {
+            const display = document.getElementById(`circle-display-${btn}`);
+            const displayWidth = display.offsetWidth;
+            const center = displayWidth / 2;
+            const N = 7, R = center * 0.7;
+            const cellSize = displayWidth < 130 ? 20 : 22;
+            const offset = cellSize / 2;
+            
+            for (let i = 0; i < N; i++) {
+              const angle = (i/N) * 2 * Math.PI - Math.PI/2;
+              const x = center + R * Math.cos(angle) - offset;
+              const y = center + R * Math.sin(angle) - offset;
+              
+              const cellNum = i+1;
+              const isActive = (circleBaseRules[1] || []).includes(cellNum);
+              const isEditable = btn === 1;
+              
+              const cell = document.createElement('div');
+              cell.className = `circle-mini-cell ${circleFlipMap[btn].includes(cellNum) ? 'active' : ''}`;
+              
+              if (btn === 1) {
+                cell.style.cursor = 'pointer';
+                cell.onclick = () => toggleCircleRule(cellNum);
+              }
+              
+              cell.textContent = cellNum;
+              cell.style.left = x + 'px';
+              cell.style.top = y + 'px';
+              display.appendChild(cell);
+            }
+          }
+          
+          circleRuleEditor.style.display = 'none';
         }
-        container.innerHTML = '';
       }
     }
     window.toggleRule = function(ruleNum, targetNum) {
@@ -734,50 +900,24 @@
       updateFlipMap();
       renderRuleEditor();
     };
-
-    // 원형 규칙 커스텀: 원형판에서 직접 지정
-    function renderCircleRuleEditor(isCustom) {
-      const N = 7, R = 110, cx = 145, cy = 145, r = 58;
-      let html = `<div class="circle-rule-editor"><div class="circle-rule-board" id="circleRuleBoard" style="width:290px;height:290px;position:relative;margin:0 auto;"></div>`;
-      if(isCustom) html += `<div class="circle-rule-desc">편집할 버튼을 먼저 클릭하세요.<br>노란색 버튼이 편집중입니다.<br>파란색(선택) 버튼을 클릭해 반전 대상을 선택하세요.</div>`;
-      html += `</div>`;
-      document.getElementById('circleRuleEditor').innerHTML = html;
-      const board = document.getElementById('circleRuleBoard');
-      for(let i=0;i<N;i++){
-        const angle = (i/N)*2*Math.PI - Math.PI/2;
-        const x = cx + R*Math.cos(angle) - r/2;
-        const y = cy + R*Math.sin(angle) - r/2;
-        const btn = document.createElement('div');
-        btn.className = 'circle-rule-btn';
-        btn.textContent = i+1;
-        btn.style.left = x+'px';
-        btn.style.top = y+'px';
-        if(isCustom) {
-          if(circleEditBtn===i+1) btn.classList.add('selected');
-          if((circleBaseRules[circleEditBtn]||[]).includes(i+1)) btn.classList.add('target');
-          btn.onclick = ()=>{
-            if(i+1===circleEditBtn) {
-              // 편집할 버튼 선택
-              circleEditBtn=i+1;
-              renderCircleRuleEditor(true);
-              return;
-            }
-            let arr = circleBaseRules[circleEditBtn]||[];
-            if(arr.includes(i+1)) arr = arr.filter(n=>n!==i+1);
-            else arr = [...arr,i+1];
-            // 자기 자신은 항상 포함
-            if(!arr.includes(circleEditBtn)) arr.push(circleEditBtn);
-            circleBaseRules[circleEditBtn]=arr;
-            updateFlipMap();
-            renderCircleRuleEditor(true);
-          };
-        } else {
-          // 기본 모드: 반전대상은 색상으로만 표시
-          if(circleBasicFlipMap[circleEditBtn].includes(i+1)) btn.classList.add('target');
-        }
-        board.appendChild(btn);
+    
+    window.toggleCircleRule = function(cellNum) {
+      if (gameType !== 'circle' || ruleMode !== 'custom') return;
+      
+      // 1번 버튼의 규칙만 직접 편집 가능
+      const arr = circleBaseRules[1] || [];
+      const idx = arr.indexOf(cellNum);
+      
+      if (idx > -1) {
+        arr.splice(idx, 1);
+      } else {
+        arr.push(cellNum);
       }
-    }
+      
+      circleBaseRules[1] = arr;
+      updateFlipMap();
+      renderRuleEditor();
+    };
 
     // --- 게임 화면 ---
     function renderGame() {
@@ -803,6 +943,8 @@
       document.getElementById('classic-restart').onclick = resetGame;
     }
     function handleClassicClick(num) {
+      clickCount++;
+      updateClickCounter();
       classicFlipMap[num].forEach(n => cardStates[n-1] = !cardStates[n-1]);
       renderGrid();
       if (cardStates.every(s=>s)) setTimeout(showWinModal, 100);
@@ -825,6 +967,8 @@
       }
     }
     function handleCircleClick(num) {
+      clickCount++;
+      updateClickCounter();
       circleFlipMap[num].forEach(n => cardStates[((n-1)+7)%7] = !cardStates[((n-1)+7)%7]);
       renderCircleGrid();
       if (cardStates.every(s=>s)) setTimeout(showWinModal, 100);
@@ -848,17 +992,30 @@
 
     // --- 게임 상태/승리 ---
     function resetGame() {
+      clickCount = 0;
+      updateClickCounter();
       if (gameType==='classic') cardStates = Array(9).fill().map(()=>Math.random()<0.5);
       else cardStates = Array(7).fill().map(()=>Math.random()<0.5);
       renderGame();
     }
     function showWinModal() {
+      const winModalMsg = document.querySelector('.win-msg');
+      winModalMsg.innerHTML = `
+        모든 카드를 앞면으로 뒤집었습니다!<br />
+        <span style="font-size: 1.2em">🎩 "Merlin"도 감탄하는 실력!</span><br />
+        <span style="color: #ffb300; font-weight: bold">총 ${clickCount}번의 클릭으로 성공했습니다!</span><br />
+        <span style="color: #6ea8fe">다시 도전해볼까요?</span>
+      `;
       document.getElementById('winModal').style.display = 'flex';
     }
     function closeWinModal() {
       document.getElementById('winModal').style.display = 'none';
       goToScreen(0);
       resetGame();
+    }
+
+    function updateClickCounter() {
+      document.querySelector('.click-counter').textContent = `클릭 횟수: ${clickCount}`;
     }
 
     // --- 초기화 ---
