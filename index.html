@@ -12,6 +12,14 @@
       --accent: #1976d2;
       --button-bg: linear-gradient(90deg, #a0c4ff 0%, #64b5f6 100%);
       --button-hover: linear-gradient(90deg, #64b5f6 0%, #a0c4ff 100%);
+      
+      /* 핑크 테마 */
+      --pink-main-bg: linear-gradient(135deg, #ffe0f0 0%, #ffb6c1 100%);
+      --pink-card-front: linear-gradient(135deg, #e91e63 0%, #f48fb1 100%);
+      --pink-card-back: linear-gradient(135deg, #f8e0e9 0%, #d7ccc8 100%);
+      --pink-accent: #e91e63;
+      --pink-button-bg: linear-gradient(90deg, #ffb6c1 0%, #f48fb1 100%);
+      --pink-button-hover: linear-gradient(90deg, #f48fb1 0%, #ffb6c1 100%);
     }
     html, body { 
       height: 100%; 
@@ -666,9 +674,112 @@
         padding: 1.5rem 0.8rem;
       }
     }
+    /* Circle용 핑크 테마 스타일 */
+    .pink-theme {
+      background: var(--pink-main-bg);
+    }
+    .pink-theme .intro-container,
+    .pink-theme .rules,
+    .pink-theme .game-container {
+      background: rgba(255, 240, 250, 0.85);
+      box-shadow: 0 4px 16px rgba(233, 30, 99, 0.15);
+    }
+    .pink-theme .intro-title,
+    .pink-theme .game-container .circle-title {
+      color: var(--pink-accent);
+    }
+    .pink-theme .game-type-btn {
+      background: var(--pink-button-bg);
+      border-color: var(--pink-accent);
+      color: var(--pink-accent);
+    }
+    .pink-theme .game-type-btn.selected,
+    .pink-theme .game-type-btn:hover {
+      background: var(--pink-accent);
+      color: #fff;
+      border-color: #ad1457;
+    }
+    .pink-theme .mode-btn {
+      border-color: var(--pink-accent);
+      color: var(--pink-accent);
+    }
+    .pink-theme .mode-btn.selected,
+    .pink-theme .mode-btn:hover {
+      background: var(--pink-accent);
+      color: #fff;
+      border-color: #ad1457;
+    }
+    .pink-theme .nav-btn {
+      background: var(--pink-button-bg);
+      color: var(--pink-accent);
+    }
+    .pink-theme .nav-btn:hover {
+      background: var(--pink-button-hover);
+      color: #fff;
+      box-shadow: 0 2px 12px rgba(233, 30, 99, 0.4);
+    }
+    .pink-theme .rules-mode-info,
+    .pink-theme .circle-rule-desc {
+      color: var(--pink-accent);
+    }
+    .pink-theme .mini-cell {
+      background: #ffe0f0;
+      border-color: #e91e63;
+    }
+    .pink-theme .mini-cell.active {
+      background: #e91e63;
+      color: #fff;
+      border-color: #e91e63;
+      box-shadow: 0 0 6px rgba(233, 30, 99, 0.5);
+    }
+    .pink-theme .circle-btn {
+      background: linear-gradient(135deg, #e91e63 0%, #f48fb1 100%);
+      border-color: #e91e63;
+    }
+    .pink-theme .circle-btn.back {
+      background: linear-gradient(135deg, #f8e0e9 0%, #d7ccc8 100%);
+      color: #e91e63;
+      border-color: #d7ccc8;
+    }
+    .pink-theme .circle-mini-cell {
+      background: #ffe0f0;
+      border-color: #e91e63;
+    }
+    .pink-theme .circle-mini-cell.active {
+      background: #e91e63;
+      color: #fff;
+      border-color: #e91e63;
+    }
+    .pink-theme .circle-mini-display::before {
+      background: #ffe0f0;
+      border-color: #e91e63;
+    }
+    .pink-theme .circle-restart {
+      background: var(--pink-button-bg);
+      color: var(--pink-accent);
+    }
+    .pink-theme .circle-restart:hover {
+      background: var(--pink-button-hover);
+      color: #fff;
+    }
+    .pink-theme .click-counter {
+      background: rgba(233, 30, 99, 0.1);
+      color: var(--pink-accent);
+    }
+    .pink-theme .win-title {
+      color: var(--pink-accent);
+    }
+    .pink-theme .win-close {
+      background: var(--pink-button-bg);
+      color: var(--pink-accent);
+    }
+    .pink-theme .win-close:hover {
+      background: var(--pink-button-hover);
+      color: #fff;
+    }
   </style>
 </head>
-<body>
+<body id="app-body">
   <!-- 소개 화면 -->
   <div class="screen active" id="screen-intro">
     <div class="intro-container">
@@ -770,6 +881,13 @@
       document.getElementById('btn-circle').classList.toggle('selected', type === 'circle');
       updateIntroDesc();
       selectMode('basic');
+      
+      // 테마 변경
+      if (type === 'circle') {
+        document.getElementById('app-body').classList.add('pink-theme');
+      } else {
+        document.getElementById('app-body').classList.remove('pink-theme');
+      }
     }
     function selectMode(mode) {
       ruleMode = mode;
@@ -1103,8 +1221,8 @@
       winModalMsg.innerHTML = `
         모든 카드를 앞면으로 뒤집었습니다!<br />
         <span style="font-size: 1.2em">🎩 "Merlin"도 감탄하는 실력!</span><br />
-        <span style="color: #ffb300; font-weight: bold">총 ${clickCount}번의 클릭으로 성공했습니다!</span><br />
-        <span style="color: #6ea8fe">다시 도전해볼까요?</span>
+        <span style="color: ${gameType === 'circle' ? '#e91e63' : '#ffb300'}; font-weight: bold">총 ${clickCount}번의 클릭으로 성공했습니다!</span><br />
+        <span style="color: ${gameType === 'circle' ? '#f48fb1' : '#6ea8fe'}">다시 도전해볼까요?</span>
       `;
       document.getElementById('winModal').style.display = 'flex';
     }
@@ -1124,6 +1242,11 @@
       updateFlipMap();
       renderRuleEditor();
       renderGame();
+      
+      // 초기 게임 타입에 따른 테마 적용
+      if (gameType === 'circle') {
+        document.getElementById('app-body').classList.add('pink-theme');
+      }
     });
   </script>
 </body>
